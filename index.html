@@ -3,966 +3,1285 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Kojlux</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<title>Kojlux — Quality in Every Direction</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-:root {
-  --sage:       #7a9e7e;
-  --sage-light: #a8c5ab;
-  --sage-dim:   #eef4ee;
-  --sage-deep:  #4e7353;
-  --bark:       #7c5c3e;
-  --cream:      #f9f6f1;
-  --cream2:     #f0ebe2;
-  --border:     #ddd5c8;
-  --text:       #1e1a16;
-  --muted:      #7a7168;
-  --surface:    #ffffff;
-  --radius:     16px;
-  --nav-h:      70px;
+/* ── RESET & TOKENS ── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: "DM Sans", sans-serif;
+  background: #0c0b09;
+  color: #f0ece4;
+  overflow-x: hidden;
+  cursor: none;
 }
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html, body { height:100%; font-family:"DM Sans",sans-serif; background:var(--cream); color:var(--text); overflow-x:hidden; }
 
+/* ── CUSTOM CURSOR ── */
+#cursor {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #c8f060;
+  position: fixed; top: 0; left: 0; z-index: 9999;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: transform .12s ease, width .2s ease, height .2s ease, background .2s ease;
+  mix-blend-mode: difference;
+}
+#cursor.hover {
+  width: 40px; height: 40px;
+  background: #c8f060;
+}
+
+/* ── CSS VARS ── */
+:root {
+  --lime: #c8f060;
+  --lime-dim: rgba(200, 240, 96, 0.12);
+  --lime-mid: rgba(200, 240, 96, 0.4);
+  --charcoal: #0c0b09;
+  --charcoal2: #141310;
+  --charcoal3: #1e1c18;
+  --charcoal4: #2a2720;
+  --stone: #f0ece4;
+  --stone2: rgba(240, 236, 228, 0.7);
+  --stone3: rgba(240, 236, 228, 0.35);
+  --stone4: rgba(240, 236, 228, 0.12);
+  --border: rgba(240, 236, 228, 0.1);
+  --nav-h: 68px;
+}
+
+/* ── GRAIN OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 9000;
+  pointer-events: none;
+  opacity: .028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
+/* ── NAV ── */
 nav {
-  position:fixed; top:0; left:0; right:0; height:var(--nav-h);
-  background:rgba(249,246,241,0.93); backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px); border-bottom:1px solid var(--border);
-  display:flex; align-items:center; justify-content:space-between;
-  padding:0 36px; z-index:1000;
+  position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h); z-index: 500;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(12, 11, 9, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 .nav-logo {
-  font-family:"Cormorant Garamond",serif; font-size:28px; font-weight:600;
-  letter-spacing:1px; color:var(--text); cursor:pointer; user-select:none;
+  font-family: "Playfair Display", serif;
+  font-size: 24px; font-weight: 700;
+  color: var(--stone); letter-spacing: -.3px;
+  cursor: pointer;
 }
-.nav-links { display:flex; gap:8px; align-items:center; }
+.nav-logo span { color: var(--lime); }
+.nav-links { display: flex; align-items: center; gap: 2px; }
 .nav-link {
-  padding:8px 18px; border-radius:30px; font-size:14px; font-weight:500;
-  color:var(--muted); cursor:pointer; transition:background .2s,color .2s;
-  border:none; background:transparent; font-family:"DM Sans",sans-serif;
+  background: transparent; border: none;
+  padding: 8px 16px; border-radius: 4px;
+  font-size: 13px; font-weight: 400;
+  color: var(--stone3);
+  cursor: pointer; font-family: "DM Sans", sans-serif;
+  transition: color .2s, background .2s;
 }
-.nav-link:hover { background:var(--cream2); color:var(--text); }
+.nav-link:hover { color: var(--stone); background: var(--stone4); }
 .nav-cta {
-  background:var(--sage-deep); color:#fff; border-radius:30px;
-  padding:9px 22px; font-size:14px; font-weight:500; cursor:pointer;
-  border:none; font-family:"DM Sans",sans-serif; transition:background .2s,transform .15s;
+  margin-left: 12px;
+  background: var(--lime); color: #0c0b09;
+  padding: 9px 22px; border-radius: 4px;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; border: none;
+  font-family: "DM Sans", sans-serif;
+  transition: background .2s, transform .15s;
 }
-.nav-cta:hover { background:var(--sage); transform:translateY(-1px); }
+.nav-cta:hover { background: #d6f472; transform: translateY(-1px); }
 
-.page { padding-top:var(--nav-h); }
-
+/* ── HERO ── */
 .hero {
-  min-height:calc(100vh - var(--nav-h)); display:flex; align-items:center;
-  justify-content:center; position:relative; overflow:hidden; padding:80px 36px;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-top: var(--nav-h);
+  position: relative; overflow: hidden;
+  align-items: center;
 }
-.hero-bg {
-  position:absolute; inset:0;
+.hero-noise {
+  position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse 70% 60% at 20% 50%, rgba(122,158,126,.13) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 80% 30%, rgba(124,92,62,.08) 0%, transparent 60%),
-    var(--cream);
+    radial-gradient(ellipse 60% 80% at 70% 50%, rgba(200,240,96,.06) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 60% at 20% 30%, rgba(200,240,96,.04) 0%, transparent 60%);
+  pointer-events: none;
 }
-.hero-pattern {
-  position:absolute; inset:0; opacity:.03;
-  background-image:repeating-linear-gradient(45deg,var(--text) 0,var(--text) 1px,transparent 1px,transparent 40px);
+.hero-grid-bg {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, black 30%, transparent 80%);
+  pointer-events: none;
 }
-.hero-inner { position:relative; max-width:860px; text-align:center; }
+
+.hero-left {
+  display: flex; align-items: center;
+  padding: 80px 60px;
+  position: relative; z-index: 1;
+  grid-column: 1 / -1;
+}
+.hero-left-inner { max-width: 820px; margin: 0 auto; text-align: center; }
+.hero-eyebrow { justify-content: center; }
+.hero-btns { justify-content: center; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--lime); font-weight: 500; margin-bottom: 32px;
+}
+.hero-eyebrow-line {
+  width: 32px; height: 1px; background: var(--lime); opacity: .6;
+}
 .hero-title {
-  font-family:"Cormorant Garamond",serif; font-size:clamp(60px,9vw,108px);
-  font-weight:300; line-height:1.05; letter-spacing:-1px; color:var(--text); margin-bottom:10px;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(58px, 6.5vw, 88px);
+  font-weight: 400; line-height: 1.05;
+  color: var(--stone); letter-spacing: -.5px;
+  margin-bottom: 28px;
 }
-.hero-title strong { font-weight:600; color:var(--sage-deep); }
-.hero-subtitle-line {
-  font-family:"Cormorant Garamond",serif; font-size:clamp(18px,3vw,28px);
-  font-weight:300; color:var(--bark); letter-spacing:6px; text-transform:uppercase; margin-bottom:32px;
+.hero-title { display: flex; justify-content: center; gap: 14px; align-items: center; flex-wrap: wrap; }
+.hero-title em { font-style: italic; color: var(--lime); }
+.hero-title .break { display: inline-block; }
+.hero-body {
+  font-size: 16px; line-height: 1.85;
+  color: var(--stone3); max-width: 420px;
+  margin: 0 auto 48px; font-weight: 300;
+  max-width: 680px; text-align: left;
 }
-.hero-desc {
-  font-size:16px; line-height:1.85; color:var(--muted);
-  max-width:560px; margin:0 auto 48px;
-}
-.hero-btns { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
 .btn-primary {
-  background:var(--sage-deep); color:#fff; padding:14px 34px; border-radius:50px;
-  font-size:14px; font-weight:600; cursor:pointer; border:none;
-  font-family:"DM Sans",sans-serif; letter-spacing:.4px;
-  transition:background .2s,transform .15s,box-shadow .2s;
-  box-shadow:0 4px 20px rgba(78,115,83,.25);
+  background: var(--lime); color: #0c0b09;
+  padding: 14px 30px; border-radius: 4px;
+  font-size: 14px; font-weight: 500;
+  cursor: pointer; border: none;
+  font-family: "DM Sans", sans-serif;
+  transition: background .2s, transform .15s;
+  letter-spacing: .2px;
 }
-.btn-primary:hover { background:var(--sage); transform:translateY(-2px); box-shadow:0 8px 30px rgba(78,115,83,.3); }
-.btn-secondary {
-  background:transparent; color:var(--text); padding:14px 34px; border-radius:50px;
-  font-size:14px; font-weight:500; cursor:pointer; border:1.5px solid var(--border);
-  font-family:"DM Sans",sans-serif; transition:background .2s,border-color .2s;
+.btn-primary:hover { background: #d6f472; transform: translateY(-2px); }
+.btn-outline {
+  background: transparent; color: var(--stone2);
+  padding: 14px 30px; border-radius: 4px;
+  font-size: 14px; font-weight: 400;
+  cursor: pointer; border: 1px solid var(--border);
+  font-family: "DM Sans", sans-serif;
+  transition: border-color .2s, color .2s;
 }
-.btn-secondary:hover { background:var(--cream2); border-color:var(--sage-light); }
+.btn-outline:hover { border-color: var(--stone3); color: var(--stone); }
 
-/* ── OFFERING STRIP (replaces old "ownership" strip) ── */
-.offering-strip {
-  padding:24px 36px; background:var(--sage-deep);
-  display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap;
+.hero-right {
+  display: flex; align-items: center; justify-content: center;
+  position: relative; padding: 80px 80px 80px 40px;
+  z-index: 1;
 }
-.offering-text { font-size:12px; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.7); font-weight:500; }
-.offering-tag {
-  display:inline-flex; align-items:center; gap:6px;
-  background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25);
-  border-radius:30px; padding:5px 14px; font-size:12px; color:#fff; font-weight:500; letter-spacing:1px;
-}
-.offering-dot { width:6px; height:6px; border-radius:50%; background:#a8c5ab; }
+.hero-visual { position: relative; width: 100%; max-width: 440px; }
 
-.section-label { font-size:11px; letter-spacing:4px; text-transform:uppercase; color:var(--sage-deep); font-weight:500; text-align:center; margin-bottom:14px; }
-.section-title { font-family:"Cormorant Garamond",serif; font-size:clamp(36px,5vw,54px); font-weight:500; text-align:center; color:var(--text); line-height:1.1; margin-bottom:16px; }
-.section-desc { font-size:15px; color:var(--muted); text-align:center; max-width:520px; margin:0 auto 56px; line-height:1.8; }
-
-.companies-section { padding:100px 36px; max-width:1100px; margin:0 auto; }
-.companies-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:28px; }
-.company-card {
-  background:var(--surface); border:1px solid var(--border); border-radius:20px;
-  overflow:hidden; transition:transform .28s cubic-bezier(.4,0,.2,1),box-shadow .28s; cursor:pointer;
+/* Main card */
+.hv-card {
+  background: var(--charcoal3);
+  border: 1px solid var(--border);
+  border-radius: 20px; overflow: hidden;
 }
-.company-card:hover { transform:translateY(-6px); box-shadow:0 20px 60px rgba(0,0,0,.1); }
-.company-card-header { padding:36px 32px 28px; position:relative; }
-.company-card-header.detailing { background:linear-gradient(135deg,#0d0d0d 0%,#181818 100%); }
-.company-card-header.digital   { background:linear-gradient(135deg,#f4f1ec 0%,#edeae4 100%); }
-.company-badge { display:inline-block; font-size:10px; letter-spacing:3px; text-transform:uppercase; padding:5px 12px; border-radius:20px; font-weight:600; margin-bottom:18px; }
-.badge-k { background:rgba(0,180,216,.15); color:#00b4d8; border:1px solid rgba(0,180,216,.3); }
-.badge-d { background:var(--sage-dim); color:var(--sage-deep); border:1px solid var(--sage-light); }
-.company-name { font-family:"Cormorant Garamond",serif; font-weight:600; font-size:28px; margin-bottom:6px; }
-.company-name.light { color:#fff; }
-.company-name.dark  { color:var(--text); }
-.company-tagline { font-size:13px; }
-.company-tagline.light { color:rgba(255,255,255,.55); }
-.company-tagline.dark  { color:var(--muted); }
-.service-pill {
-  position:absolute; top:20px; right:20px; font-size:10px; font-weight:600;
-  letter-spacing:2px; text-transform:uppercase; padding:4px 10px; border-radius:20px;
-  background:rgba(122,158,126,.15); color:var(--sage-deep); border:1px solid rgba(122,158,126,.3);
+.hv-card-top {
+  background: var(--charcoal4);
+  border-bottom: 1px solid var(--border);
+  padding: 28px;
+  display: flex; align-items: center; gap: 14px;
+  position: relative;
 }
-.company-card-body { padding:28px 32px 32px; }
-.company-desc { font-size:14px; line-height:1.8; color:var(--muted); margin-bottom:24px; }
-.company-tags { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:26px; }
-.c-tag { font-size:11px; font-weight:500; padding:5px 12px; background:var(--cream2); border-radius:20px; color:var(--muted); border:1px solid var(--border); }
-.open-btn {
-  display:flex; align-items:center; gap:8px; width:100%; padding:13px 20px;
-  border-radius:12px; border:none; font-family:"DM Sans",sans-serif; font-size:14px;
-  font-weight:600; cursor:pointer; transition:background .2s,transform .15s; justify-content:center;
+.hv-card-icon {
+  width: 48px; height: 48px; border-radius: 10px;
+  background: var(--lime-dim); border: 1px solid var(--lime-mid);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
 }
-.open-btn.dark-btn { background:#0d0d0d; color:#fff; }
-.open-btn.dark-btn:hover { background:#1a1a1a; transform:scale(1.02); }
-.open-btn.sage-btn { background:var(--sage-deep); color:#fff; }
-.open-btn.sage-btn:hover { background:var(--sage); transform:scale(1.02); }
-.open-btn svg { width:16px; height:16px; }
+.hv-card-icon svg { width: 22px; height: 22px; stroke: var(--lime); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.hv-card-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--lime); font-weight: 500; margin-bottom: 4px; }
+.hv-card-name { font-family: "Playfair Display", serif; font-size: 20px; color: var(--stone); font-weight: 400; }
+.hv-live { position: absolute; top: 20px; right: 20px; display: flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--lime); }
+.hv-live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--lime); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+.hv-card-body { padding: 24px 28px; }
+.hv-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0; border-bottom: 1px solid var(--stone4);
+}
+.hv-row:last-child { border-bottom: none; }
+.hv-row-label { font-size: 12px; color: var(--stone3); }
+.hv-row-val { font-size: 13px; color: var(--stone); font-weight: 500; }
+.hv-row-val.lime { color: var(--lime); }
 
-.values-section { background:var(--cream2); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:100px 36px; }
-.values-inner { max-width:1000px; margin:0 auto; }
-.values-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:24px; }
-.value-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:32px 26px; }
-.value-icon { font-size:28px; margin-bottom:16px; display:block; }
-.value-title { font-family:"Cormorant Garamond",serif; font-size:20px; font-weight:600; margin-bottom:10px; color:var(--text); }
-.value-desc { font-size:13px; color:var(--muted); line-height:1.8; }
+/* Floating stat */
+/* Floating stat removed */
 
+/* Services badge */
+.hv-badge {
+  position: absolute; top: -18px; right: -18px;
+  background: var(--lime); color: #0c0b09;
+  border-radius: 50%;
+  width: 72px; height: 72px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-family: "Playfair Display", serif;
+}
+.hv-badge-num { font-size: 22px; font-weight: 700; line-height: 1; }
+.hv-badge-text { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; font-family: "DM Sans", sans-serif; font-weight: 500; }
+
+/* ── TICKER ── */
+.ticker-wrap {
+  background: var(--lime); overflow: hidden;
+  padding: 14px 0; white-space: nowrap;
+  border-top: none; border-bottom: none;
+}
+.ticker-inner {
+  display: inline-flex; gap: 48px;
+  animation: tick 20s linear infinite;
+}
+@keyframes tick { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.ticker-item {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+  color: #0c0b09; font-weight: 500;
+}
+.ticker-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(12,11,9,.4); }
+
+/* ── SECTION COMMONS ── */
+.section-wrap { max-width: 1280px; margin: 0 auto; padding: 0 80px; }
+.sec-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--lime); font-weight: 500; margin-bottom: 14px; }
+.sec-title {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(38px, 4.5vw, 58px);
+  font-weight: 400; color: var(--stone);
+  line-height: 1.1; letter-spacing: -.3px;
+}
+.sec-title em { font-style: italic; color: var(--stone3); }
+
+/* ── SERVICES ── */
+.services { padding: 140px 0; }
+.svc-header {
+  display: flex; align-items: flex-end;
+  justify-content: space-between; gap: 40px;
+  margin-bottom: 72px;
+}
+.svc-header-left { flex: 1; }
+.svc-header-right {
+  max-width: 360px;
+  font-size: 15px; line-height: 1.8;
+  color: var(--stone3); font-weight: 300;
+  flex-shrink: 0;
+}
+.svc-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 20px; overflow: hidden;
+}
+.svc-card {
+  background: var(--charcoal2);
+  padding: 56px 52px;
+  cursor: pointer;
+  transition: background .25s;
+  display: flex; flex-direction: column;
+  position: relative; overflow: hidden;
+}
+.svc-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  background: var(--lime); transform: scaleX(0); transform-origin: left;
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+}
+.svc-card:hover { background: var(--charcoal3); }
+.svc-card:hover::after { transform: scaleX(1); }
+.svc-num {
+  font-family: "Playfair Display", serif;
+  font-size: 80px; font-weight: 700; color: var(--charcoal4);
+  line-height: 1; margin-bottom: 36px;
+  user-select: none;
+  transition: color .25s;
+}
+.svc-card:hover .svc-num { color: var(--lime-dim); }
+.svc-icon-wrap {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 22px;
+}
+.svc-icon {
+  width: 46px; height: 46px; border-radius: 10px;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--stone4);
+  transition: background .25s, border-color .25s;
+}
+.svc-card:hover .svc-icon { background: var(--lime-dim); border-color: var(--lime-mid); }
+.svc-icon svg { width: 20px; height: 20px; stroke: var(--stone3); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: stroke .25s; }
+.svc-card:hover .svc-icon svg { stroke: var(--lime); }
+.svc-badge { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--stone3); font-weight: 500; }
+.svc-name {
+  font-family: "Playfair Display", serif;
+  font-size: 32px; font-weight: 400; color: var(--stone);
+  line-height: 1.2; margin-bottom: 16px; letter-spacing: -.2px;
+}
+.svc-desc {
+  font-size: 14px; line-height: 1.85;
+  color: var(--stone3); margin-bottom: 36px;
+  font-weight: 300; flex: 1;
+}
+.svc-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 36px; }
+.svc-tag {
+  font-size: 11px; padding: 5px 12px;
+  background: var(--stone4); border: 1px solid var(--border);
+  border-radius: 3px; color: var(--stone3);
+}
+.svc-arrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: 500; color: var(--lime);
+  transition: gap .2s;
+}
+.svc-card:hover .svc-arrow { gap: 16px; }
+.svc-arrow svg { width: 16px; height: 16px; stroke: var(--lime); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ── PHILOSOPHY ── */
+.philosophy { padding: 140px 0; border-top: 1px solid var(--border); }
+.phil-inner { display: grid; grid-template-columns: 1fr 2fr; gap: 100px; align-items: start; }
+.phil-left { position: sticky; top: 100px; }
+.phil-left .sec-title { margin-bottom: 24px; }
+.phil-body { font-size: 15px; line-height: 1.8; color: var(--stone3); font-weight: 300; margin-bottom: 32px; }
+.phil-cta {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: 500; color: var(--lime);
+  cursor: pointer; background: none; border: none;
+  font-family: "DM Sans", sans-serif;
+  transition: gap .2s;
+}
+.phil-cta:hover { gap: 16px; }
+.phil-cta svg { width: 16px; height: 16px; stroke: var(--lime); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.phil-right { display: flex; flex-direction: column; gap: 1px; }
+.phil-item {
+  padding: 36px 0;
+  border-bottom: 1px solid var(--border);
+  display: grid; grid-template-columns: 80px 1fr; gap: 24px;
+  align-items: start;
+}
+.phil-item:first-child { border-top: 1px solid var(--border); }
+.phil-item-num {
+  font-family: "Playfair Display", serif;
+  font-size: 14px; color: var(--stone3);
+  padding-top: 3px;
+}
+.phil-item-title {
+  font-family: "Playfair Display", serif;
+  font-size: 24px; font-weight: 400; color: var(--stone);
+  margin-bottom: 10px; letter-spacing: -.1px;
+}
+.phil-item-desc { font-size: 14px; line-height: 1.8; color: var(--stone3); font-weight: 300; }
+
+/* ── LOCATION ── */
+.location {
+  padding: 140px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--charcoal2);
+}
+.loc-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.loc-map {
+  height: 360px; border-radius: 16px;
+  border: 1px solid var(--border);
+  position: relative; overflow: hidden;
+  background: var(--charcoal3);
+  display: flex; align-items: center; justify-content: center;
+}
+.loc-map-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(200,240,96,.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,240,96,.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.loc-pin-outer {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: center;
+}
+.loc-ring {
+  position: absolute;
+  border-radius: 50%; border: 1px solid var(--lime);
+  animation: ring-out 2.5s ease-out infinite;
+}
+.loc-ring:nth-child(1) { width: 60px; height: 60px; animation-delay: 0s; }
+.loc-ring:nth-child(2) { width: 100px; height: 100px; animation-delay: .5s; }
+.loc-ring:nth-child(3) { width: 140px; height: 140px; animation-delay: 1s; }
+@keyframes ring-out { 0% { opacity: .5; transform: scale(.8); } 100% { opacity: 0; transform: scale(1); } }
+.loc-pin {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--lime);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 1;
+}
+.loc-pin svg { width: 20px; height: 20px; stroke: #0c0b09; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.loc-label {
+  position: absolute; top: 24px; left: 24px;
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--lime); font-weight: 500;
+}
+.loc-coords {
+  position: absolute; bottom: 20px; right: 20px;
+  font-size: 11px; color: var(--stone3); font-family: monospace; letter-spacing: 1px;
+}
+.loc-text .sec-label { margin-bottom: 14px; }
+.loc-title {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(38px, 4vw, 54px);
+  font-weight: 400; color: var(--stone);
+  line-height: 1.1; letter-spacing: -.3px; margin-bottom: 20px;
+}
+.loc-body { font-size: 15px; line-height: 1.8; color: var(--stone3); font-weight: 300; margin-bottom: 40px; }
+.loc-stats { display: flex; gap: 40px; }
+.loc-stat-num {
+  font-family: "Playfair Display", serif;
+  font-size: 40px; font-weight: 700; color: var(--lime); line-height: 1;
+}
+.loc-stat-label { font-size: 12px; color: var(--stone3); margin-top: 4px; }
+
+/* ── FOOTER ── */
 footer {
-  padding:60px 36px 40px; max-width:1100px; margin:0 auto;
-  display:flex; align-items:flex-start; justify-content:space-between;
-  gap:40px; flex-wrap:wrap; border-top:1px solid var(--border);
+  padding: 80px 0 48px;
+  border-top: 1px solid var(--border);
 }
-.footer-logo { font-family:"Cormorant Garamond",serif; font-size:28px; font-weight:600; color:var(--text); margin-bottom:10px; }
-.footer-tagline { font-size:13px; color:var(--muted); line-height:1.7; max-width:260px; }
-.footer-copy { font-size:12px; color:var(--muted); margin-top:20px; }
-.footer-col h5 { font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--sage-deep); font-weight:600; margin-bottom:16px; }
-.footer-col a { display:block; font-size:14px; color:var(--muted); text-decoration:none; margin-bottom:10px; cursor:pointer; transition:color .18s; }
-.footer-col a:hover { color:var(--text); }
+.footer-inner {
+  display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 60px; margin-bottom: 60px;
+}
+.foot-logo {
+  font-family: "Playfair Display", serif;
+  font-size: 28px; font-weight: 700; color: var(--stone);
+  margin-bottom: 14px;
+}
+.foot-logo span { color: var(--lime); }
+.foot-tagline { font-size: 13px; line-height: 1.75; color: var(--stone3); font-weight: 300; max-width: 240px; }
+.foot-col h5 {
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--lime); font-weight: 500; margin-bottom: 20px;
+}
+.foot-col a {
+  display: block; font-size: 13px; color: var(--stone3);
+  text-decoration: none; margin-bottom: 12px;
+  cursor: pointer; transition: color .15s;
+}
+.foot-col a:hover { color: var(--stone); }
+.foot-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 32px; border-top: 1px solid var(--border);
+}
+.foot-copy { font-size: 12px; color: var(--stone3); }
+.foot-lime { color: var(--lime); }
 
-/* ── FULLSCREEN OVERLAY (replaces old browser shell) ── */
-#company-overlay {
-  position:fixed; inset:0; background:var(--cream); z-index:2000;
-  display:none; flex-direction:column;
-  opacity:0; transition:opacity .25s ease;
+/* ── OVERLAY ── */
+#overlay {
+  position: fixed; inset: 0; z-index: 800;
+  background: var(--charcoal);
+  display: none; flex-direction: column;
+  opacity: 0; transition: opacity .3s ease;
 }
-#company-overlay.open { display:flex; }
-#company-overlay.visible { opacity:1; }
+#overlay.show { display: flex; }
+#overlay.visible { opacity: 1; }
+.ov-bar {
+  height: 60px; flex-shrink: 0;
+  background: var(--charcoal2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 28px; gap: 20px;
+  backdrop-filter: blur(20px);
+}
+.ov-back {
+  display: flex; align-items: center; gap: 8px;
+  background: transparent; border: 1px solid var(--border);
+  border-radius: 4px; padding: 7px 16px;
+  font-size: 13px; color: var(--stone2);
+  cursor: pointer; font-family: "DM Sans", sans-serif;
+  transition: border-color .2s, color .2s;
+}
+.ov-back:hover { border-color: var(--stone3); color: var(--stone); }
+.ov-back svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ov-site-name {
+  font-family: "Playfair Display", serif;
+  font-size: 18px; color: var(--stone); font-weight: 400;
+}
+#ov-iframe { width: 100%; flex: 1; border: none; display: block; }
 
-.overlay-topbar {
-  height:56px; background:rgba(249,246,241,0.95); backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px); border-bottom:1px solid var(--border);
-  display:flex; align-items:center; padding:0 24px; gap:16px; flex-shrink:0; z-index:10;
+/* ── ANIMATIONS ── */
+.fade-up {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity .7s ease, transform .7s ease;
 }
-.overlay-back {
-  display:flex; align-items:center; gap:8px;
-  background:transparent; border:1.5px solid var(--border); border-radius:30px;
-  padding:7px 18px; font-size:13px; font-weight:500; color:var(--text);
-  cursor:pointer; font-family:"DM Sans",sans-serif; transition:background .2s,border-color .2s;
-}
-.overlay-back:hover { background:var(--cream2); border-color:var(--sage-light); }
-.overlay-back svg { width:14px; height:14px; }
-.overlay-site-name {
-  font-family:"Cormorant Garamond",serif; font-size:18px; font-weight:600;
-  color:var(--text); letter-spacing:.5px;
-}
-.overlay-iframe-wrap { flex:1; overflow:hidden; }
-#company-iframe { width:100%; height:100%; border:none; display:block; }
+.fade-up.in { opacity: 1; transform: translateY(0); }
+.fade-up-delay-1 { transition-delay: .1s; }
+.fade-up-delay-2 { transition-delay: .2s; }
+.fade-up-delay-3 { transition-delay: .3s; }
+.fade-up-delay-4 { transition-delay: .4s; }
 
-.fade-up { opacity:0; transform:translateY(24px); transition:opacity .6s ease,transform .6s ease; }
-.fade-up.visible { opacity:1; transform:translateY(0); }
-
-@media(max-width:700px){
-  nav { padding:0 20px; }
-  .nav-links { display:none; }
-  .hero { padding:60px 20px; }
-  .companies-section, .values-section { padding:70px 20px; }
-  footer { padding:50px 20px 40px; }
-  .overlay-topbar { padding:0 16px; }
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  .section-wrap { padding: 0 40px; }
+  .hero { grid-template-columns: 1fr; }
+  .hero-left { padding: 80px 40px; }
+  .hero-right { display: none; }
+  .svc-grid { grid-template-columns: 1fr; }
+  .phil-inner { grid-template-columns: 1fr; gap: 48px; }
+  .phil-left { position: static; }
+  .loc-inner { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr 1fr; gap: 40px; }
+}
+@media (max-width: 700px) {
+  nav { padding: 0 24px; }
+  .nav-links { display: none; }
+  .section-wrap { padding: 0 24px; }
+  .hero-left { padding: 60px 24px; }
+  .services, .philosophy, .location { padding: 80px 0; }
+  .svc-card { padding: 40px 28px; }
+  .svc-num { font-size: 60px; }
+  .loc-stats { flex-wrap: wrap; gap: 24px; }
+  footer { padding: 60px 0 40px; }
+  .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+  .foot-bottom { flex-direction: column; gap: 12px; text-align: center; }
+  .svc-header { flex-direction: column; }
 }
 </style>
 </head>
 <body>
 
+<!-- Custom cursor -->
+<div id="cursor"></div>
+
+<!-- Nav -->
 <nav>
-  <div class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">Kojlux</div>
+  <div class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">Koj<span>lux</span></div>
   <div class="nav-links">
-    <button class="nav-link" onclick="scrollSec('services')">What We Offer</button>
-    <button class="nav-link" onclick="scrollSec('values')">About</button>
-    <button class="nav-cta"  onclick="scrollSec('services')">Explore Services</button>
+    <button class="nav-link" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Services</button>
+    <button class="nav-link" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">About</button>
+    <button class="nav-link" onclick="document.getElementById('location').scrollIntoView({behavior:'smooth'})">Location</button>
+    <button class="nav-cta" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Get Started</button>
   </div>
 </nav>
 
-<div class="page">
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-noise"></div>
+  <div class="hero-grid-bg"></div>
 
-  <section class="hero" id="top">
-    <div class="hero-bg"></div>
-    <div class="hero-pattern"></div>
-    <div class="hero-inner">
-      <h1 class="hero-title"><strong>Kojlux</strong></h1>
-      <p class="hero-subtitle-line">Quality in Every Direction</p>
-      <p class="hero-desc">Kojlux is a privately held group delivering premium services across industries — from professional mobile car detailing to full digital solutions. Whatever the need, we show up with the same standard: quality, clarity, and intention.</p>
-      <div class="hero-btns">
-        <button class="btn-primary"   onclick="scrollSec('services')">See What We Offer</button>
-        <button class="btn-secondary" onclick="scrollSec('values')">Our Story</button>
+  <div class="hero-left">
+    <div class="hero-left-inner">
+      <div class="hero-eyebrow fade-up">
+        <span class="hero-eyebrow-line"></span>
+        Fresno, California
+      </div>
+      <h1 class="hero-title fade-up fade-up-delay-1">
+        <span class="break">We deliver</span>
+        <span class="break">quality in</span>
+        <em>every direction.</em>
+      </h1>
+      <p class="hero-body fade-up fade-up-delay-2">
+        Kojlux is a privately held service group operating out of Fresno. One standard across two very different industries — professional mobile car detailing and full digital solutions. Precision. Clarity. Intention.
+      </p>
+      <div class="hero-btns fade-up fade-up-delay-3">
+        <button class="btn-primary" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Explore Services</button>
+        <button class="btn-outline" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">Our Story</button>
       </div>
     </div>
-  </section>
-
-  <!-- Offering strip: what we do, not who we own -->
-  <div class="offering-strip">
-    <span class="offering-text">We Offer</span>
-    <div class="offering-tag"><span class="offering-dot"></span>Mobile Car Detailing</div>
-    <div class="offering-tag"><span class="offering-dot"></span>Digital Services</div>
   </div>
 
-  <section class="companies-section" id="services">
-    <div class="section-label fade-up">Our Services</div>
-    <h2 class="section-title fade-up">What We Offer</h2>
-    <p class="section-desc fade-up">Every service under Kojlux is purpose-built and held to the same high standard — quality you can see, clarity you can trust.</p>
-    <div class="companies-grid">
+  <!-- hero-right block removed per request -->
+</section>
 
-      <div class="company-card fade-up" onclick="openCompany('mobile')">
-        <div class="company-card-header detailing">
-          <div class="service-pill">Mobile Detailing</div>
-          <div class="company-badge badge-k">Automotive</div>
-          <h3 class="company-name light">Kojlux Mobile<br>Car Detailing</h3>
-          <p class="company-tagline light">We come to you. Your car, detailed to perfection.</p>
-        </div>
-        <div class="company-card-body">
-          <p class="company-desc">Professional mobile car detailing serving the Fresno area. Interior, exterior, and specialty finishes — brought directly to your door. Book in minutes, pay on arrival.</p>
-          <div class="company-tags">
-            <span class="c-tag">Mobile Service</span>
-            <span class="c-tag">Fresno, CA</span>
-            <span class="c-tag">From $50</span>
-          </div>
-          <button class="open-btn dark-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-            Book a Detail
-          </button>
-        </div>
-      </div>
-
-      <div class="company-card fade-up" onclick="openCompany('digital')">
-        <div class="company-card-header digital">
-          <div class="service-pill">Digital Services</div>
-          <div class="company-badge badge-d">Digital</div>
-          <h3 class="company-name dark">Kojlux<br>Digital</h3>
-          <p class="company-tagline dark">Your digital presence — built clean, fast, and with confidence.</p>
-        </div>
-        <div class="company-card-body">
-          <p class="company-desc">Website development, flyer design, and social media setup — each handled by a dedicated specialist at the best price possible.</p>
-          <div class="company-tags">
-            <span class="c-tag">Web Development</span>
-            <span class="c-tag">Flyer Design</span>
-            <span class="c-tag">Social Media</span>
-          </div>
-          <button class="open-btn sage-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-            Explore Digital
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <section class="values-section" id="values">
-    <div class="values-inner">
-      <div class="section-label fade-up">The Kojlux Standard</div>
-      <h2 class="section-title fade-up">Built on Purpose</h2>
-      <p class="section-desc fade-up">Every service we offer is founded on the same core principles that define the Kojlux name.</p>
-      <div class="values-grid">
-        <div class="value-card fade-up">
-          <span class="value-icon">&#127807;</span>
-          <h4 class="value-title">Quality First</h4>
-          <p class="value-desc">We don't cut corners. Whether it's a car detail or a website build, the result must be something we're proud to put our name on.</p>
-        </div>
-        <div class="value-card fade-up">
-          <span class="value-icon">&#129309;</span>
-          <h4 class="value-title">Trust &amp; Clarity</h4>
-          <p class="value-desc">No hidden fees. No surprises. Our customers always know what they're getting and exactly what they're paying for.</p>
-        </div>
-        <div class="value-card fade-up">
-          <span class="value-icon">&#128205;</span>
-          <h4 class="value-title">Community Roots</h4>
-          <p class="value-desc">Based in Fresno, CA — built for the local community. Every dollar spent with us stays and grows right here.</p>
-        </div>
-        <div class="value-card fade-up">
-          <span class="value-icon">&#128640;</span>
-          <h4 class="value-title">Always Growing</h4>
-          <p class="value-desc">Kojlux is not finished. More services and more opportunities are on the horizon — watch this space.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <div class="footer-brand">
-      <div class="footer-logo">Kojlux</div>
-      <p class="footer-tagline">A privately held family of services headquartered in Fresno, California.</p>
-      <p class="footer-copy">&copy; 2025 Kojlux. All rights reserved.</p>
-    </div>
-    <div class="footer-col">
-      <h5>Services</h5>
-      <a onclick="openCompany('mobile')">Mobile Car Detailing</a>
-      <a onclick="openCompany('digital')">Kojlux Digital</a>
-    </div>
-    <div class="footer-col">
-      <h5>Navigate</h5>
-      <a onclick="scrollSec('services')">What We Offer</a>
-      <a onclick="scrollSec('values')">About</a>
-    </div>
-  </footer>
-
+<!-- Ticker -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-inner" id="ticker"></div>
 </div>
 
-<!-- ── FULLSCREEN COMPANY OVERLAY ── -->
-<div id="company-overlay">
-  <div class="overlay-topbar">
-    <button class="overlay-back" onclick="closeBrowser()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+<!-- Services -->
+<section class="services" id="services">
+  <div class="section-wrap">
+    <div class="svc-header">
+      <div class="svc-header-left">
+        <div class="sec-label fade-up">What We Offer</div>
+        <h2 class="sec-title fade-up fade-up-delay-1">Two offerings.<br><em>One standard.</em></h2>
+      </div>
+      <p class="svc-header-right fade-up fade-up-delay-2">
+        Every Kojlux service is purpose-built and held to the same uncompromising standard. Whether we are at your driveway or building your website, the commitment does not change.
+      </p>
+    </div>
+
+    <div class="svc-grid">
+      <div class="svc-card" onclick="openOverlay('mobile')">
+        <div class="svc-num">01</div>
+        <div class="svc-icon-wrap">
+          <div class="svc-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 11l1-4h16l1 4"/><path d="M2 11h20v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5z"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+          </div>
+          <span class="svc-badge">Mobile Detailing</span>
+        </div>
+        <h3 class="svc-name">Kojlux Mobile<br>Car Detailing</h3>
+        <p class="svc-desc">
+          Professional detailing delivered directly to your driveway anywhere in the Fresno area. Interior deep cleans, full exterior washes, and complete packages — all brought to you with the same precision every time. Book in minutes, pay on arrival.
+        </p>
+        <div class="svc-tags">
+          <span class="svc-tag">Fresno, CA</span>
+          <span class="svc-tag">Mobile</span>
+          <span class="svc-tag">From $20</span>
+          <span class="svc-tag">Pay on Arrival</span>
+        </div>
+        <span class="svc-arrow">
+          View &amp; Book
+          <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+        </span>
+      </div>
+
+      <div class="svc-card" onclick="openOverlay('digital')">
+        <div class="svc-num">02</div>
+        <div class="svc-icon-wrap">
+          <div class="svc-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <span class="svc-badge">Digital Services</span>
+        </div>
+        <h3 class="svc-name">Kojlux<br>Digital</h3>
+        <p class="svc-desc">
+          Your digital presence — built properly from the ground up. Websites, flyer design, and social media setup, each handled by a dedicated specialist. Clean results, honest pricing, and nothing left half-finished. We do not cut corners, and we do not overcharge.
+        </p>
+        <div class="svc-tags">
+          <span class="svc-tag">Web Development</span>
+          <span class="svc-tag">Flyer Design</span>
+          <span class="svc-tag">Social Media</span>
+          <span class="svc-tag">From $5</span>
+        </div>
+        <span class="svc-arrow">
+          View Services
+          <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Philosophy -->
+<section class="philosophy" id="about">
+  <div class="section-wrap">
+    <div class="phil-inner">
+      <div class="phil-left">
+        <div class="sec-label fade-up">The Kojlux Standard</div>
+        <h2 class="sec-title fade-up fade-up-delay-1">Built on<br><em>deliberate<br>choices.</em></h2>
+        <p class="phil-body fade-up fade-up-delay-2">
+          We set these principles before we took on a single client. They are not aspirations — they are operating conditions. Every service, every interaction, every result is measured against them.
+        </p>
+        <button class="phil-cta fade-up fade-up-delay-3" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">
+          See Our Services
+          <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <div class="phil-right">
+        <div class="phil-item fade-up">
+          <span class="phil-item-num">01</span>
+          <div>
+            <div class="phil-item-title">Quality without exception</div>
+            <p class="phil-item-desc">We will not deliver work we cannot stand behind. Every job — a $20 wash or a full website build — receives the same level of attention and care. The name on it is ours.</p>
+          </div>
+        </div>
+        <div class="phil-item fade-up fade-up-delay-1">
+          <span class="phil-item-num">02</span>
+          <div>
+            <div class="phil-item-title">No ambiguity, ever</div>
+            <p class="phil-item-desc">The price you see is the price you pay. The timeline we give is the one we hold. No hidden fees, no vague estimates, no surprises waiting at the end of the process.</p>
+          </div>
+        </div>
+        <div class="phil-item fade-up fade-up-delay-2">
+          <span class="phil-item-num">03</span>
+          <div>
+            <div class="phil-item-title">Time is respected</div>
+            <p class="phil-item-desc">We show up when we say we will. We deliver when we commit to. Prompt communication and clear timelines are not extras — they are the baseline.</p>
+          </div>
+        </div>
+        <div class="phil-item fade-up fade-up-delay-3">
+          <span class="phil-item-num">04</span>
+          <div>
+            <div class="phil-item-title">Community first</div>
+            <p class="phil-item-desc">Fresno born. Fresno focused. We are building something local that lasts — and every client is part of that. Kojlux is not finished. More is coming.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Location -->
+<section class="location" id="location">
+  <div class="section-wrap">
+    <div class="loc-inner">
+      <div class="loc-map fade-up">
+        <div class="loc-map-grid"></div>
+        <span class="loc-label">Fresno, CA</span>
+        <span class="loc-coords">36.7378° N, 119.7871° W</span>
+        <div class="loc-pin-outer">
+          <div class="loc-ring"></div>
+          <div class="loc-ring"></div>
+          <div class="loc-ring"></div>
+          <div class="loc-pin">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="loc-text fade-up fade-up-delay-1">
+        <div class="sec-label">Based Here</div>
+        <h2 class="loc-title">Fresno,<br>California</h2>
+        <p class="loc-body">
+          Kojlux operates from Fresno and serves the city and surrounding communities. Mobile detailing comes to your driveway. Digital services are delivered anywhere. Everything is handled directly — no outsourcing, no middlemen.
+        </p>
+        <div class="loc-stats">
+          <div>
+            <div class="loc-stat-num">2</div>
+            <div class="loc-stat-label">Service verticals</div>
+          </div>
+          <div>
+            <div class="loc-stat-num">$5</div>
+            <div class="loc-stat-label">Digital starting at</div>
+          </div>
+          <div>
+            <div class="loc-stat-num">5★</div>
+            <div class="loc-stat-label">Client rating</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="section-wrap">
+    <div class="footer-inner">
+      <div>
+        <div class="foot-logo">Koj<span>lux</span></div>
+        <p class="foot-tagline">A privately held service group headquartered in Fresno, California. Quality in every direction.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Services</h5>
+        <a onclick="openOverlay('mobile')">Mobile Car Detailing</a>
+        <a onclick="openOverlay('digital')">Kojlux Digital</a>
+      </div>
+      <div class="foot-col">
+        <h5>Navigate</h5>
+        <a onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">What We Offer</a>
+        <a onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">About</a>
+        <a onclick="document.getElementById('location').scrollIntoView({behavior:'smooth'})">Location</a>
+      </div>
+      <div class="foot-col">
+        <h5>Contact</h5>
+        <a href="https://api.whatsapp.com/send?phone=15593168075" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="https://www.instagram.com/main.launchpoint" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://cash.app/$16clem" target="_blank" rel="noopener">Cash App · $16clem</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span class="foot-copy">&copy; 2025 Kojlux. All rights reserved.</span>
+      <span class="foot-copy">Made in <span class="foot-lime">Fresno, CA</span></span>
+    </div>
+  </div>
+</footer>
+
+<!-- Overlay -->
+<div id="overlay">
+  <div class="ov-bar">
+    <button class="ov-back" onclick="closeOverlay()">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
       Back to Kojlux
     </button>
-    <span class="overlay-site-name" id="overlay-site-name"></span>
+    <span class="ov-site-name" id="ov-site-name"></span>
   </div>
-  <div class="overlay-iframe-wrap">
-    <iframe id="company-iframe" src="about:blank" title="Company Website"
-      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox">
-    </iframe>
-  </div>
+  <iframe id="ov-iframe" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
 </div>
 
 <script>
-function scrollSec(id) {
-  var el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: "smooth" });
-}
+/* ── CURSOR ── */
+const cur = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top  = e.clientY + 'px';
+});
+document.querySelectorAll('button, a, .svc-card, .nav-link, .nav-cta, .phil-cta').forEach(el => {
+  el.addEventListener('mouseenter', () => cur.classList.add('hover'));
+  el.addEventListener('mouseleave', () => cur.classList.remove('hover'));
+});
 
-/* ─── MOBILE DETAILING (Kojlux style: cream/sage palette) ─── */
-var MOBILE_HTML = `<!DOCTYPE html>
+/* ── TICKER ── */
+const ITEMS = [
+  'Mobile Car Detailing', 'Fresno, California', 'Website Development',
+  'Flyer Design', 'Social Media Setup', 'Quality First', 'Pay on Arrival',
+  'No Hidden Fees', 'From $5', 'Community Roots'
+];
+const t = document.getElementById('ticker');
+[...ITEMS, ...ITEMS].forEach(text => {
+  const el = document.createElement('span');
+  el.className = 'ticker-item';
+  el.innerHTML = text + '<span class="ticker-dot"></span>';
+  t.appendChild(el);
+});
+
+/* ── INTERSECTION OBSERVER ── */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+/* ── SUB-SITE HTML ── */
+const MOBILE_HTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Kojlux Mobile Car Detailing</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-:root {
-  --sage:#7a9e7e; --sage-light:#a8c5ab; --sage-dim:#eef4ee; --sage-deep:#4e7353;
-  --bark:#7c5c3e; --cream:#f9f6f1; --cream2:#f0ebe2; --border:#ddd5c8;
-  --text:#1e1a16; --muted:#7a7168; --surface:#ffffff; --radius:16px;
-}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:"DM Sans",sans-serif;background:var(--cream);color:var(--text);min-height:100vh;overflow-x:hidden;}
-
-/* HERO */
-.hero{min-height:100vh;display:flex;align-items:flex-end;justify-content:center;position:relative;overflow:hidden;}
-.hero-img{position:absolute;inset:0;background:url('https://upload.wikimedia.org/wikipedia/commons/6/6d/Lamborghini_Aventador_LP700-4.jpg') no-repeat center center/cover;}
-.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08) 0%,rgba(20,17,12,.82) 65%,var(--cream) 100%);}
-.hero-content{position:relative;z-index:1;width:100%;max-width:800px;text-align:center;padding:0 28px 80px;}
-.hero-eyebrow{display:inline-block;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--sage-light);border:1px solid rgba(168,197,171,.35);background:rgba(168,197,171,.1);padding:5px 16px;border-radius:30px;margin-bottom:22px;}
-.hero-title{font-family:"Cormorant Garamond",serif;font-size:clamp(48px,9vw,90px);font-weight:300;line-height:1.05;color:#fff;margin-bottom:10px;letter-spacing:-1px;}
-.hero-title strong{font-weight:600;color:var(--sage-light);}
-.hero-sub{font-size:16px;color:rgba(255,255,255,.65);line-height:1.8;max-width:480px;margin:0 auto 36px;}
-.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
-.btn-p{background:var(--sage-deep);color:#fff;padding:14px 32px;border-radius:50px;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:"DM Sans",sans-serif;letter-spacing:.4px;transition:background .2s,transform .15s,box-shadow .2s;box-shadow:0 4px 20px rgba(78,115,83,.35);}
-.btn-p:hover{background:var(--sage);transform:translateY(-2px);box-shadow:0 8px 28px rgba(78,115,83,.4);}
-.btn-o{background:transparent;color:#fff;padding:14px 32px;border-radius:50px;font-size:14px;font-weight:500;cursor:pointer;border:1.5px solid rgba(255,255,255,.35);font-family:"DM Sans",sans-serif;transition:background .2s,border-color .2s;}
-.btn-o:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.6);}
-
-/* SERVICES */
-.services{padding:80px 28px;max-width:860px;margin:0 auto;}
-.sec-label{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--sage-deep);font-weight:500;text-align:center;margin-bottom:12px;}
-.sec-title{font-family:"Cormorant Garamond",serif;font-size:clamp(32px,5vw,48px);font-weight:500;text-align:center;color:var(--text);margin-bottom:14px;line-height:1.1;}
-.sec-desc{font-size:15px;color:var(--muted);text-align:center;max-width:480px;margin:0 auto 48px;line-height:1.8;}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px;transition:transform .25s,box-shadow .25s;cursor:default;}
-.card:hover{transform:translateY(-5px);box-shadow:0 16px 48px rgba(0,0,0,.09);}
-.card-icon{font-size:28px;margin-bottom:16px;}
-.card-title{font-family:"Cormorant Garamond",serif;font-size:22px;font-weight:600;margin-bottom:6px;color:var(--text);}
-.card-desc{font-size:13px;color:var(--muted);line-height:1.75;margin-bottom:20px;}
-.card-price{font-family:"Cormorant Garamond",serif;font-size:36px;font-weight:300;color:var(--sage-deep);}
-.card-price span{font-size:16px;font-weight:500;}
-
-/* HOW IT WORKS */
-.how{background:var(--cream2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 28px;}
-.how-inner{max-width:760px;margin:0 auto;}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:28px;margin-top:48px;}
-.step{text-align:center;}
-.step-num{width:44px;height:44px;border-radius:50%;background:var(--sage-deep);color:#fff;font-family:"Cormorant Garamond",serif;font-size:20px;font-weight:600;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
-.step-title{font-family:"Cormorant Garamond",serif;font-size:17px;font-weight:600;margin-bottom:6px;color:var(--text);}
-.step-desc{font-size:13px;color:var(--muted);line-height:1.7;}
-
-/* BOOKING */
-.booking{padding:80px 28px;max-width:680px;margin:0 auto;text-align:center;}
-.cashapp-tag{display:inline-flex;align-items:center;gap:8px;background:#1c4a2a;color:#22c55e;font-size:15px;font-weight:700;padding:8px 22px;border-radius:30px;margin-bottom:28px;letter-spacing:.5px;}
-.book-steps{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;margin:32px 0;text-align:left;}
-.bstep{display:flex;gap:16px;align-items:flex-start;margin-bottom:22px;}
+:root{--lime:#c8f060;--lime-dim:rgba(200,240,96,.1);--lime-mid:rgba(200,240,96,.35);--charcoal:#0c0b09;--charcoal2:#141310;--charcoal3:#1e1c18;--charcoal4:#2a2720;--stone:#f0ece4;--stone2:rgba(240,236,228,.7);--stone3:rgba(240,236,228,.35);--stone4:rgba(240,236,228,.1);--border:rgba(240,236,228,.1);}
+html,body{min-height:100%;font-family:"DM Sans",sans-serif;background:var(--charcoal);color:var(--stone);scroll-behavior:smooth;}
+.hero{min-height:100vh;display:flex;align-items:flex-end;position:relative;overflow:hidden;background:#080806;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(200,240,96,.07) 0%,transparent 70%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;mask-image:linear-gradient(180deg,black 0%,transparent 100%);-webkit-mask-image:linear-gradient(180deg,black 0%,transparent 100%);}
+.hero-content{position:relative;z-index:1;max-width:780px;padding:0 48px 80px;width:100%;}
+.hero-eye{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--lime);font-weight:500;margin-bottom:24px;}
+.hero-dot{width:5px;height:5px;border-radius:50%;background:var(--lime);}
+.hero-title{font-family:"Playfair Display",serif;font-size:clamp(48px,8vw,82px);font-weight:400;line-height:1.05;color:var(--stone);margin-bottom:20px;letter-spacing:-.5px;}
+.hero-title em{font-style:italic;color:var(--lime);}
+.hero-sub{font-size:16px;color:var(--stone3);line-height:1.8;max-width:480px;margin-bottom:40px;font-weight:300;}
+.btns{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-p{background:var(--lime);color:#0c0b09;padding:13px 28px;border-radius:4px;font-size:14px;font-weight:500;cursor:pointer;border:none;font-family:"DM Sans",sans-serif;transition:background .2s;}
+.btn-p:hover{background:#d6f472;}
+.btn-o{background:transparent;color:var(--stone2);padding:13px 28px;border-radius:4px;font-size:14px;font-weight:400;cursor:pointer;border:1px solid var(--border);font-family:"DM Sans",sans-serif;transition:border-color .2s;}
+.btn-o:hover{border-color:var(--stone3);}
+.sec{max-width:900px;margin:0 auto;padding:100px 48px;}
+.sec-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--lime);font-weight:500;margin-bottom:12px;}
+.sec-title{font-family:"Playfair Display",serif;font-size:clamp(32px,5vw,48px);font-weight:400;color:var(--stone);margin-bottom:40px;letter-spacing:-.3px;line-height:1.1;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-top:40px;}
+.card{background:var(--charcoal2);padding:36px 30px;transition:background .2s;}
+.card:hover{background:var(--charcoal3);}
+.card-icon{width:42px;height:42px;border-radius:9px;background:var(--lime-dim);border:1px solid var(--lime-mid);display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
+.card-icon svg{width:18px;height:18px;stroke:var(--lime);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.card-name{font-family:"Playfair Display",serif;font-size:20px;font-weight:400;margin-bottom:8px;color:var(--stone);}
+.card-desc{font-size:13px;color:var(--stone3);line-height:1.8;margin-bottom:22px;font-weight:300;}
+.card-price{font-family:"Playfair Display",serif;font-size:30px;font-weight:700;color:var(--lime);}
+.card-price span{font-size:14px;font-weight:300;color:var(--stone3);}
+.how-wrap{background:var(--charcoal2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1px;background:var(--border);margin-top:40px;}
+.step{background:var(--charcoal2);padding:32px 28px;}
+.step-num{font-family:"Playfair Display",serif;font-size:44px;font-weight:400;color:var(--charcoal4);margin-bottom:16px;line-height:1;}
+.step-name{font-family:"Playfair Display",serif;font-size:18px;font-weight:400;color:var(--stone);margin-bottom:8px;}
+.step-desc{font-size:13px;color:var(--stone3);line-height:1.75;font-weight:300;}
+.booking-wrap{max-width:680px;margin:0 auto;padding:100px 48px;}
+.cashapp-tag{display:inline-flex;align-items:center;gap:8px;background:#0b3d1a;color:#22c55e;font-size:14px;font-weight:600;padding:8px 20px;border-radius:4px;margin-bottom:32px;}
+.book-box{background:var(--charcoal3);border:1px solid var(--border);border-radius:12px;padding:32px;margin:28px 0;}
+.bstep{display:flex;gap:14px;align-items:flex-start;margin-bottom:20px;}
 .bstep:last-child{margin-bottom:0;}
-.bstep-num{width:30px;height:30px;border-radius:50%;background:var(--sage-deep);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.bstep-text{font-size:14px;line-height:1.7;color:var(--muted);}
-.bstep-text strong{color:var(--text);}
-.book-btns{display:flex;flex-direction:column;gap:12px;}
-.bbtn{padding:15px;border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;border:none;font-family:"DM Sans",sans-serif;transition:background .2s,transform .15s;}
-.bbtn:active{transform:scale(.97);}
-.bbtn-primary{background:var(--sage-deep);color:#fff;}
-.bbtn-primary:hover{background:var(--sage);}
-.bbtn-sky{background:#00778a;color:#fff;}
-.bbtn-sky:hover{background:#00677a;}
-.bbtn-ghost{background:transparent;color:var(--muted);font-size:13px;font-weight:400;}
-
-/* REVIEWS */
-.reviews{background:var(--cream2);border-top:1px solid var(--border);padding:80px 28px;}
-.reviews-inner{max-width:860px;margin:0 auto;}
-.rev-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:48px;}
-.rev-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;}
-.rev-stars{color:#f59e0b;font-size:15px;margin-bottom:10px;}
-.rev-text{font-size:14px;line-height:1.75;color:var(--muted);margin-bottom:12px;font-style:italic;}
-.rev-author{font-size:12px;color:var(--sage-deep);font-weight:600;}
-
-/* FOOTER */
-.site-footer{border-top:1px solid var(--border);padding:40px 28px;text-align:center;}
-.footer-logo{font-family:"Cormorant Garamond",serif;font-size:24px;font-weight:600;color:var(--text);margin-bottom:8px;}
-.footer-sub{font-size:13px;color:var(--muted);}
-
-/* CALENDAR MODAL */
-#cal-overlay{position:fixed;inset:0;background:rgba(30,26,22,.55);z-index:500;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px);}
-#cal-overlay.open{display:flex;animation:fadein .25s ease;}
-@keyframes fadein{from{opacity:0}to{opacity:1}}
-.cal-sheet{background:var(--surface);border-radius:24px 24px 0 0;border:1px solid var(--border);border-bottom:none;padding:8px 24px 48px;width:100%;max-width:520px;animation:slideup .3s cubic-bezier(.4,0,.2,1);}
-@keyframes slideup{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
-.sheet-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:14px auto 20px;}
-.cal-title{font-family:"Cormorant Garamond",serif;font-size:24px;font-weight:600;margin-bottom:4px;}
-.cal-sub{font-size:13px;color:var(--muted);margin-bottom:24px;}
+.bstep-n{width:28px;height:28px;border-radius:50%;background:var(--lime);color:#0c0b09;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.bstep-t{font-size:14px;line-height:1.75;color:var(--stone3);font-weight:300;}
+.bstep-t strong{color:var(--stone);}
+.bbtns{display:flex;flex-direction:column;gap:10px;}
+.bbtn{padding:14px;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;border:none;font-family:"DM Sans",sans-serif;transition:background .2s;}
+.bbtn:active{transform:scale(.98);}
+.bbtn-lime{background:var(--lime);color:#0c0b09;}
+.bbtn-lime:hover{background:#d6f472;}
+.bbtn-teal{background:#006b7d;color:#fff;}
+.bbtn-teal:hover{background:#005f6f;}
+.bbtn-ghost{background:transparent;color:var(--stone3);font-size:13px;font-weight:300;}
+.reviews-wrap{background:var(--charcoal2);border-top:1px solid var(--border);}
+.rev-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--border);border-radius:12px;overflow:hidden;margin-top:40px;}
+.rev{background:var(--charcoal3);padding:28px;}
+.rev-stars{font-size:14px;color:#f59e0b;margin-bottom:12px;letter-spacing:2px;}
+.rev-text{font-size:14px;line-height:1.8;color:var(--stone3);margin-bottom:14px;font-style:italic;font-weight:300;}
+.rev-auth{font-size:12px;color:var(--lime);font-weight:500;}
+.site-footer{border-top:1px solid var(--border);padding:36px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.foot-logo{font-family:"Playfair Display",serif;font-size:20px;font-weight:700;color:var(--stone);}
+.foot-logo span{color:var(--lime);}
+.foot-sub{font-size:12px;color:var(--stone3);}
+#cal-overlay{position:fixed;inset:0;background:rgba(8,8,6,.7);z-index:500;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(10px);}
+#cal-overlay.open{display:flex;animation:fi .25s ease;}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.cal-sheet{background:var(--charcoal3);border-radius:20px 20px 0 0;border:1px solid var(--border);border-bottom:none;padding:8px 28px 52px;width:100%;max-width:500px;animation:su .3s cubic-bezier(.4,0,.2,1);}
+@keyframes su{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
+.handle{width:36px;height:3px;background:var(--border);border-radius:2px;margin:16px auto 24px;}
+.cal-hd{font-family:"Playfair Display",serif;font-size:24px;font-weight:400;color:var(--stone);margin-bottom:4px;}
+.cal-sub{font-size:13px;color:var(--stone3);margin-bottom:26px;font-weight:300;}
 .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
-.cal-nav button{background:var(--cream2);border:1px solid var(--border);color:var(--text);width:34px;height:34px;border-radius:50%;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.cal-nav button:hover{background:var(--border);}
-.cal-month-label{font-family:"Cormorant Garamond",serif;font-size:18px;font-weight:600;color:var(--text);}
+.cal-nav button{background:var(--charcoal4);border:1px solid var(--border);color:var(--stone2);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .18s;}
+.cal-nav button:hover{background:var(--stone4);}
+.cal-month{font-family:"Playfair Display",serif;font-size:18px;font-weight:400;color:var(--stone);}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:20px;}
-.cal-day-name{text-align:center;font-size:10px;color:var(--muted);padding:6px 0;letter-spacing:1px;text-transform:uppercase;}
-.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:13px;cursor:pointer;transition:background .15s,color .15s;font-weight:500;color:var(--text);}
-.cal-day:hover:not(.empty):not(.past){background:var(--cream2);}
-.cal-day.empty,.cal-day.past{color:#ccc;cursor:default;pointer-events:none;}
-.cal-day.today{border:1px solid var(--sage-deep);color:var(--sage-deep);}
-.cal-day.selected{background:var(--sage-deep);color:#fff;border-radius:12px;}
-.cal-note{font-size:12px;color:var(--muted);text-align:center;line-height:1.7;}
-#tip-overlay{position:fixed;inset:0;background:rgba(30,26,22,.55);z-index:600;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px);}
-#tip-overlay.open{display:flex;animation:fadein .25s ease;}
-.tip-sheet{background:var(--surface);border-radius:24px 24px 0 0;border:1px solid var(--border);border-bottom:none;padding:8px 24px 48px;width:100%;max-width:520px;animation:slideup .3s cubic-bezier(.4,0,.2,1);}
-.tip-title{font-family:"Cormorant Garamond",serif;font-size:22px;font-weight:600;margin-bottom:4px;}
-.tip-date-label{font-size:14px;color:var(--sage-deep);font-weight:500;margin-bottom:20px;}
-
-/* toast */
-#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--cream);padding:12px 22px;border-radius:30px;font-size:14px;z-index:700;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap;}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-@media(max-width:600px){.services,.booking,.reviews,.how{padding:60px 18px;}.hero-content{padding:0 18px 60px;}}
+.cal-dn{text-align:center;font-size:10px;color:var(--stone3);padding:6px 0;letter-spacing:2px;text-transform:uppercase;}
+.cal-d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:13px;cursor:pointer;transition:background .15s;color:var(--stone2);}
+.cal-d:hover:not(.emp):not(.past){background:var(--stone4);}
+.cal-d.emp,.cal-d.past{color:var(--charcoal4);pointer-events:none;}
+.cal-d.today{border:1px solid var(--lime);color:var(--lime);}
+.cal-d.sel{background:var(--lime);color:#0c0b09;font-weight:500;}
+.cal-note{font-size:12px;color:var(--stone3);text-align:center;line-height:1.7;}
+#tip-overlay{position:fixed;inset:0;background:rgba(8,8,6,.7);z-index:600;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(10px);}
+#tip-overlay.open{display:flex;animation:fi .25s ease;}
+.tip-sheet{background:var(--charcoal3);border-radius:20px 20px 0 0;border:1px solid var(--border);border-bottom:none;padding:8px 28px 52px;width:100%;max-width:500px;animation:su .3s cubic-bezier(.4,0,.2,1);}
+.tip-hd{font-family:"Playfair Display",serif;font-size:22px;font-weight:400;color:var(--stone);margin-bottom:4px;}
+.tip-date{font-size:13px;color:var(--lime);font-weight:500;margin-bottom:24px;}
+@media(max-width:600px){.sec,.booking-wrap{padding:60px 24px;}.hero-content{padding:0 24px 60px;}.site-footer{padding:28px 24px;}}
 </style>
 </head>
 <body>
-
-<!-- HERO -->
 <div class="hero">
-  <div class="hero-img"></div>
-  <div class="hero-overlay"></div>
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
   <div class="hero-content">
-    <div class="hero-eyebrow">Fresno, CA &middot; Mobile Detailing</div>
-    <h1 class="hero-title">Your Car.<br><strong>Immaculate.</strong></h1>
-    <p class="hero-sub">Kojlux Mobile Car Detailing comes to you — professional results delivered directly to your driveway.</p>
-    <div class="hero-btns">
-      <button class="btn-p" onclick="openCal()">&#128197; Book Now</button>
-      <button class="btn-o" onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})">How It Works</button>
+    <div class="hero-eye"><span class="hero-dot"></span>Fresno, CA &middot; Mobile Detailing</div>
+    <h1 class="hero-title">Your car,<br><em>immaculate.</em></h1>
+    <p class="hero-sub">Kojlux Mobile Car Detailing comes directly to your driveway. Professional results, zero travel required on your part.</p>
+    <div class="btns">
+      <button class="btn-p" onclick="openCal()">Book a Detail</button>
+      <button class="btn-o" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">How It Works</button>
     </div>
   </div>
 </div>
 
-<!-- SERVICES -->
-<section class="services" id="services-section">
-  <div class="sec-label">What We Do</div>
-  <h2 class="sec-title">Our Services</h2>
-  <p class="sec-desc">Simple pricing. Exceptional results. We bring everything we need directly to you.</p>
+<div class="sec">
+  <div class="sec-label">Services</div>
+  <div class="sec-title">What we offer</div>
   <div class="cards">
     <div class="card">
-      <div class="card-icon">&#10024;</div>
-      <div class="card-title">Full Detail</div>
-      <div class="card-desc">Interior + exterior deep clean. Every surface, every corner — done right.</div>
-      <div class="card-price"><span>from</span> $50</div>
+      <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <div class="card-name">Full Detail</div>
+      <div class="card-desc">Interior and exterior deep clean. Every surface treated with care, start to finish.</div>
+      <div class="card-price"><span>from </span>$50</div>
     </div>
     <div class="card">
-      <div class="card-icon">&#128166;</div>
-      <div class="card-title">Exterior Wash</div>
-      <div class="card-desc">Outside only — quick, clean, and thorough. Perfect for a fast refresh.</div>
-      <div class="card-price"><span>from</span> $20</div>
+      <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 4-4"/></svg></div>
+      <div class="card-name">Exterior Wash</div>
+      <div class="card-desc">Outside-only service. Thorough, quick, ideal for a clean refresh between full details.</div>
+      <div class="card-price"><span>from </span>$20</div>
     </div>
     <div class="card">
-      <div class="card-icon">&#127775;</div>
-      <div class="card-title">Interior Only</div>
-      <div class="card-desc">Vacuum, wipe-down, and surface clean throughout your cabin.</div>
-      <div class="card-price"><span>from</span> $35</div>
+      <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+      <div class="card-name">Interior Only</div>
+      <div class="card-desc">Full vacuum, wipe-down, and surface clean throughout the entire cabin.</div>
+      <div class="card-price"><span>from </span>$35</div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- HOW IT WORKS -->
-<section class="how" id="how-it-works">
-  <div class="how-inner">
-    <div class="sec-label">Simple Process</div>
-    <h2 class="sec-title">How It Works</h2>
+<div class="how-wrap" id="how">
+  <div class="sec" style="background:transparent;">
+    <div class="sec-label">The Process</div>
+    <div class="sec-title">How it works</div>
     <div class="steps">
-      <div class="step"><div class="step-num">1</div><div class="step-title">Pick a Date</div><div class="step-desc">Tap "Book Now" to open our calendar and choose any available day.</div></div>
-      <div class="step"><div class="step-num">2</div><div class="step-title">Send $1 Tip</div><div class="step-desc">Reserve your slot with a $1 tip on Cash App to <strong>$16clem</strong> — keeps things serious.</div></div>
-      <div class="step"><div class="step-num">3</div><div class="step-title">Message Us</div><div class="step-desc">Confirm your address, time, and service on WhatsApp.</div></div>
-      <div class="step"><div class="step-num">4</div><div class="step-title">We Come to You</div><div class="step-desc">Pay the balance in cash when we arrive. Sit back and enjoy the results.</div></div>
+      <div class="step"><div class="step-num">01</div><div class="step-name">Pick a date</div><div class="step-desc">Open the calendar and choose any available day. Takes about thirty seconds.</div></div>
+      <div class="step"><div class="step-num">02</div><div class="step-name">Send $1 to hold</div><div class="step-desc">A small tip on Cash App to <strong style="color:var(--stone)">$16clem</strong> locks your slot. Keeps it mutual.</div></div>
+      <div class="step"><div class="step-num">03</div><div class="step-name">Message us</div><div class="step-desc">Confirm your address, preferred time, and chosen service via WhatsApp.</div></div>
+      <div class="step"><div class="step-num">04</div><div class="step-name">We arrive</div><div class="step-desc">Pay the remaining balance in cash when we get there. Sit back and enjoy the result.</div></div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- BOOKING CTA -->
-<section class="booking">
-  <div class="sec-label">Ready to Book</div>
-  <h2 class="sec-title">Reserve Your Spot</h2>
-  <div class="cashapp-tag">&#x1F4B8; Cash App: $16clem</div>
-  <div class="book-steps">
-    <div class="bstep"><div class="bstep-num">1</div><div class="bstep-text">Send a <strong>$1 tip</strong> on Cash App to <strong>$16clem</strong> to lock in your date.</div></div>
-    <div class="bstep"><div class="bstep-num">2</div><div class="bstep-text">Message on <strong>WhatsApp</strong> to confirm your address, time, and service.</div></div>
-    <div class="bstep"><div class="bstep-num">3</div><div class="bstep-text">Pay the <strong>remaining balance</strong> in cash when we arrive on your appointment day.</div></div>
+<div class="booking-wrap">
+  <div class="sec-label" style="text-align:center;">Book Now</div>
+  <div class="sec-title" style="text-align:center;margin-bottom:24px;">Reserve your spot</div>
+  <div style="text-align:center;"><div class="cashapp-tag">Cash App &middot; $16clem</div></div>
+  <div class="book-box">
+    <div class="bstep"><div class="bstep-n">1</div><div class="bstep-t">Send a <strong>$1 tip</strong> on Cash App to <strong>$16clem</strong> to reserve your chosen date.</div></div>
+    <div class="bstep"><div class="bstep-n">2</div><div class="bstep-t">Message us on <strong>WhatsApp</strong> with your address, preferred time, and service.</div></div>
+    <div class="bstep"><div class="bstep-n">3</div><div class="bstep-t">Pay the <strong>remaining balance in cash</strong> when we arrive on the day.</div></div>
   </div>
-  <div class="book-btns">
-    <button class="bbtn bbtn-primary" onclick="openCal()">&#128197; Pick a Date</button>
-    <button class="bbtn bbtn-sky" onclick="window.open('https://api.whatsapp.com/send?phone=15593168075','_blank')">&#128242; Contact on WhatsApp</button>
-    <button class="bbtn bbtn-ghost" onclick="window.open('https://cash.app/\$16clem','_blank')">Open Cash App &rarr; \$16clem</button>
+  <div class="bbtns">
+    <button class="bbtn bbtn-lime" onclick="openCal()">Choose a Date</button>
+    <button class="bbtn bbtn-teal" onclick="window.open('https://api.whatsapp.com/send?phone=15593168075','_blank')">Contact on WhatsApp</button>
+    <button class="bbtn bbtn-ghost" onclick="window.open('https://cash.app/$16clem','_blank')">Open Cash App &rarr; $16clem</button>
   </div>
-</section>
+</div>
 
-<!-- REVIEWS -->
-<section class="reviews">
-  <div class="reviews-inner">
-    <div class="sec-label">What Clients Say</div>
-    <h2 class="sec-title">Reviews</h2>
+<div class="reviews-wrap">
+  <div class="sec">
+    <div class="sec-label">Reviews</div>
+    <div class="sec-title">What clients say</div>
     <div class="rev-grid">
-      <div class="rev-card"><div class="rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="rev-text">"Came out to my house in under an hour. My car literally looked brand new — I was shocked at the difference. Worth every penny."</div><div class="rev-author">&mdash; Marcus T., Fresno</div></div>
-      <div class="rev-card"><div class="rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="rev-text">"Super professional, showed up on time, and the detailing was impeccable. I'll be booking every month."</div><div class="rev-author">&mdash; Destiny R., Clovis</div></div>
-      <div class="rev-card"><div class="rev-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div><div class="rev-text">"Great value for $50. Interior looks spotless. Would love a ceramic coat option added in the future!"</div><div class="rev-author">&mdash; James K., Fresno</div></div>
+      <div class="rev"><div class="rev-stars">★★★★★</div><div class="rev-text">"Came to my house and left my car looking brand new. I was genuinely shocked at the transformation."</div><div class="rev-auth">— Marcus T., Fresno</div></div>
+      <div class="rev"><div class="rev-stars">★★★★★</div><div class="rev-text">"Professional, on time, flawless work. I am booking every month from here on out."</div><div class="rev-auth">— Destiny R., Clovis</div></div>
+      <div class="rev"><div class="rev-stars">★★★★☆</div><div class="rev-text">"Great value at $50. Interior came out spotless. Would love to see a ceramic coat option added."</div><div class="rev-auth">— James K., Fresno</div></div>
     </div>
   </div>
-</section>
+</div>
 
 <footer class="site-footer">
-  <div class="footer-logo">Kojlux Mobile Car Detailing</div>
-  <div class="footer-sub">Fresno, CA &middot; &copy; 2025 Kojlux. All rights reserved.</div>
+  <div class="foot-logo">Koj<span>lux</span></div>
+  <div class="foot-sub">Mobile Car Detailing &middot; Fresno, CA &middot; &copy; 2025 Kojlux</div>
 </footer>
 
-<!-- CALENDAR -->
 <div id="cal-overlay">
   <div class="cal-sheet">
-    <div class="sheet-handle"></div>
-    <div class="cal-title">Pick a Date</div>
-    <div class="cal-sub">Select an available day to begin booking.</div>
+    <div class="handle"></div>
+    <div class="cal-hd">Choose a date</div>
+    <div class="cal-sub">Select any available day to begin booking.</div>
     <div class="cal-nav">
       <button id="prev-btn">&#8249;</button>
-      <span class="cal-month-label" id="cal-month-label"></span>
+      <span class="cal-month" id="cal-month-label"></span>
       <button id="next-btn">&#8250;</button>
     </div>
     <div class="cal-grid" id="cal-grid"></div>
-    <div class="cal-note">A $1 tip via Cash App confirms your slot.</div>
+    <div class="cal-note">A $1 Cash App tip confirms your chosen date.</div>
   </div>
 </div>
 
-<!-- TIP SHEET -->
 <div id="tip-overlay">
   <div class="tip-sheet">
-    <div class="sheet-handle"></div>
-    <div class="tip-title">Confirm Your Booking</div>
-    <div class="tip-date-label" id="tip-date-label">Loading...</div>
-    <div class="book-steps" style="margin-bottom:20px;">
-      <div class="bstep"><div class="bstep-num">1</div><div class="bstep-text">Send a <strong>$1 tip</strong> on Cash App to <strong>$16clem</strong>.</div></div>
-      <div class="bstep"><div class="bstep-num">2</div><div class="bstep-text">Message on <strong>WhatsApp</strong> to confirm your address, time, and service.</div></div>
-      <div class="bstep"><div class="bstep-num">3</div><div class="bstep-text">Pay the <strong>remaining balance</strong> in cash when we arrive.</div></div>
+    <div class="handle"></div>
+    <div class="tip-hd">Confirm your booking</div>
+    <div class="tip-date" id="tip-date-label"></div>
+    <div class="book-box">
+      <div class="bstep"><div class="bstep-n">1</div><div class="bstep-t">Send a <strong>$1 tip</strong> on Cash App to <strong>$16clem</strong>.</div></div>
+      <div class="bstep"><div class="bstep-n">2</div><div class="bstep-t">Message on <strong>WhatsApp</strong> to confirm your details.</div></div>
+      <div class="bstep"><div class="bstep-n">3</div><div class="bstep-t">Pay the <strong>remaining balance in cash</strong> when we arrive.</div></div>
     </div>
-    <div class="book-btns">
-      <button class="bbtn bbtn-primary" onclick="window.open('https://cash.app/\$16clem','_blank')">&#x1F4B8; Send $1 on Cash App</button>
-      <button class="bbtn bbtn-sky" onclick="window.open('https://api.whatsapp.com/send?phone=15593168075','_blank')">&#128242; Contact on WhatsApp</button>
+    <div class="bbtns">
+      <button class="bbtn bbtn-lime" onclick="window.open('https://cash.app/$16clem','_blank')">Send $1 on Cash App</button>
+      <button class="bbtn bbtn-teal" onclick="window.open('https://api.whatsapp.com/send?phone=15593168075','_blank')">Contact on WhatsApp</button>
       <button class="bbtn bbtn-ghost" onclick="closeTip()">Cancel</button>
     </div>
   </div>
 </div>
 
-<div id="toast"></div>
-
 <script>
-const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
-const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-let calMonth,calYear;
-
-function openCal(){
-  const now=new Date();
-  if(calMonth===undefined){calMonth=now.getMonth();calYear=now.getFullYear();}
-  buildCal();
-  document.getElementById('cal-overlay').classList.add('open');
-}
+const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+let cm, cy;
+function openCal(){const n=new Date();if(cm===undefined){cm=n.getMonth();cy=n.getFullYear();}buildCal();document.getElementById('cal-overlay').classList.add('open');}
 function closeCal(){document.getElementById('cal-overlay').classList.remove('open');}
 function showTip(){document.getElementById('tip-overlay').classList.add('open');}
 function closeTip(){document.getElementById('tip-overlay').classList.remove('open');}
-
-function buildCal(){
-  const now=new Date();
-  document.getElementById('cal-month-label').textContent=MONTHS[calMonth]+' '+calYear;
-  const grid=document.getElementById('cal-grid');
-  grid.innerHTML='';
-  DAYS.forEach(d=>{const h=document.createElement('div');h.className='cal-day-name';h.textContent=d;grid.appendChild(h);});
-  const first=new Date(calYear,calMonth,1).getDay();
-  const days=new Date(calYear,calMonth+1,0).getDate();
-  const td=now.getDate(),tm=now.getMonth(),ty=now.getFullYear();
-  for(let i=0;i<first;i++){const e=document.createElement('div');e.className='cal-day empty';grid.appendChild(e);}
-  for(let d=1;d<=days;d++){
-    const cell=document.createElement('div');cell.className='cal-day';cell.textContent=d;
-    const past=(calYear<ty)||(calYear===ty&&calMonth<tm)||(calYear===ty&&calMonth===tm&&d<td);
-    if(past){cell.classList.add('past');}
-    else{
-      if(calYear===ty&&calMonth===tm&&d===td)cell.classList.add('today');
-      cell.addEventListener('click',()=>selectDay(cell,d));
-    }
-    grid.appendChild(cell);
-  }
-}
-
-function selectDay(cell,d){
-  document.querySelectorAll('.cal-day.selected').forEach(c=>c.classList.remove('selected'));
-  cell.classList.add('selected');
-  const full=new Date(calYear,calMonth,d);
-  const label=full.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  window.pendingDate=label;
-  document.getElementById('tip-date-label').textContent='&#128197; '+label;
-  closeCal();
-  showTip();
-}
-
-document.getElementById('prev-btn').addEventListener('click',()=>{calMonth--;if(calMonth<0){calMonth=11;calYear--;}buildCal();});
-document.getElementById('next-btn').addEventListener('click',()=>{calMonth++;if(calMonth>11){calMonth=0;calYear++;}buildCal();});
+function buildCal(){const n=new Date();document.getElementById('cal-month-label').textContent=MN[cm]+' '+cy;const g=document.getElementById('cal-grid');g.innerHTML='';DN.forEach(d=>{const h=document.createElement('div');h.className='cal-dn';h.textContent=d;g.appendChild(h);});const f=new Date(cy,cm,1).getDay();const days=new Date(cy,cm+1,0).getDate();const td=n.getDate(),tm=n.getMonth(),ty=n.getFullYear();for(let i=0;i<f;i++){const e=document.createElement('div');e.className='cal-d emp';g.appendChild(e);}for(let d=1;d<=days;d++){const c=document.createElement('div');c.className='cal-d';c.textContent=d;const past=(cy<ty)||(cy===ty&&cm<tm)||(cy===ty&&cm===tm&&d<td);if(past){c.classList.add('past');}else{if(cy===ty&&cm===tm&&d===td)c.classList.add('today');c.addEventListener('click',()=>selectDay(c,d));}g.appendChild(c);}}
+function selectDay(c,d){document.querySelectorAll('.cal-d.sel').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');const full=new Date(cy,cm,d);document.getElementById('tip-date-label').textContent=full.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});closeCal();showTip();}
+document.getElementById('prev-btn').addEventListener('click',()=>{cm--;if(cm<0){cm=11;cy--;}buildCal();});
+document.getElementById('next-btn').addEventListener('click',()=>{cm++;if(cm>11){cm=0;cy++;}buildCal();});
 document.getElementById('cal-overlay').addEventListener('click',function(e){if(e.target===this)closeCal();});
 document.getElementById('tip-overlay').addEventListener('click',function(e){if(e.target===this)closeTip();});
-
-function showToast(msg){
-  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2600);
-}
 <\/script>
 </body>
 </html>`;
 
-/* ─── KOJLUX DIGITAL (was LaunchPoint) ─── */
-var DIGITAL_HTML = `<!DOCTYPE html>
+const DIGITAL_HTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Kojlux Digital</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-:root{
-  --sage:#7a9e7e;--sage-light:#a8c5ab;--sage-dim:#eef4ee;--sage-deep:#4e7353;
-  --bark:#7c5c3e;--cream:#f9f6f1;--cream2:#f0ebe2;--border:#ddd5c8;
-  --text:#1e1a16;--muted:#7a7168;--surface:#ffffff;--radius:14px;--nav-h:64px;
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:"DM Sans",sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
-
-nav{position:sticky;top:0;z-index:100;height:var(--nav-h);background:rgba(249,246,241,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:6px;padding:0 20px;}
-.nav-logo{position:absolute;left:28px;font-family:"Cormorant Garamond",serif;font-size:20px;font-weight:700;color:var(--text);letter-spacing:.5px;}
-.nav-logo span{color:var(--sage-deep);}
-.tab-btn{background:transparent;border:none;padding:9px 18px;font-size:14px;font-weight:500;color:var(--muted);cursor:pointer;border-radius:30px;transition:background .2s,color .2s;font-family:"DM Sans",sans-serif;white-space:nowrap;}
-.tab-btn:hover{color:var(--text);background:var(--cream2);}
-.tab-btn.active{background:var(--sage-deep);color:#fff;}
-
-.section{display:none;animation:fadeUp .4s ease both;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{--lime:#c8f060;--lime-dim:rgba(200,240,96,.1);--lime-mid:rgba(200,240,96,.35);--charcoal:#0c0b09;--charcoal2:#141310;--charcoal3:#1e1c18;--charcoal4:#2a2720;--stone:#f0ece4;--stone2:rgba(240,236,228,.7);--stone3:rgba(240,236,228,.35);--stone4:rgba(240,236,228,.1);--border:rgba(240,236,228,.1);}
+html,body{min-height:100%;font-family:"DM Sans",sans-serif;background:var(--charcoal);color:var(--stone);}
+header{position:sticky;top:0;z-index:100;height:60px;background:rgba(12,11,9,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;gap:4px;padding:0 20px;}
+.tab{background:transparent;border:none;padding:9px 18px;font-size:13px;font-weight:400;color:var(--stone3);cursor:pointer;border-radius:4px;transition:color .18s,background .18s;font-family:"DM Sans",sans-serif;white-space:nowrap;}
+.tab:hover{color:var(--stone);background:var(--stone4);}
+.tab.active{background:var(--lime);color:#0c0b09;font-weight:500;}
+.section{display:none;animation:fu .35s ease both;}
+@keyframes fu{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 .section.active{display:block;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
-
-/* HOME */
-#home{max-width:860px;margin:0 auto;padding:70px 28px 80px;}
-.home-hero{text-align:center;margin-bottom:60px;}
-.home-eyebrow{display:inline-block;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--sage-deep);border:1px solid var(--sage-light);background:var(--sage-dim);padding:5px 16px;border-radius:30px;margin-bottom:24px;}
-.home-title{font-family:"Cormorant Garamond",serif;font-size:clamp(44px,8vw,72px);font-weight:700;line-height:1.1;color:var(--text);margin-bottom:22px;letter-spacing:-.5px;}
-.home-title span{color:var(--sage-deep);}
-.home-lead{font-size:17px;line-height:1.85;color:var(--muted);max-width:620px;margin:0 auto 36px;}
-.home-lead strong{color:var(--sage-deep);font-weight:600;cursor:pointer;}
-.home-lead strong:hover{text-decoration:underline;}
-.divider{width:48px;height:2px;background:linear-gradient(90deg,var(--sage-deep),var(--sage-light));border-radius:2px;margin:0 auto 16px;}
-.cards-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:48px;}
-.home-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px 26px;text-align:center;cursor:pointer;transition:transform .22s,box-shadow .22s,border-color .22s;}
-.home-card:hover{transform:translateY(-5px);box-shadow:0 12px 40px rgba(78,115,83,.12);border-color:var(--sage-light);}
-.card-icon-ring{width:56px;height:56px;border-radius:50%;background:var(--sage-dim);border:1px solid var(--sage-light);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
-.card-icon-ring svg{width:24px;height:24px;stroke:var(--sage-deep);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
-.home-card h3{font-family:"Cormorant Garamond",serif;font-size:18px;font-weight:600;margin-bottom:8px;color:var(--text);}
-.home-card p{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:18px;}
-.card-price{font-family:"Cormorant Garamond",serif;font-size:22px;font-weight:700;color:var(--sage-deep);}
-
-.contact-strip{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:60px;}
-.contact-chip{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:var(--surface);border:1px solid var(--border);border-radius:30px;font-size:13px;font-weight:500;color:var(--text);text-decoration:none;transition:background .2s,border-color .2s,color .2s;}
-.contact-chip:hover{background:var(--sage-deep);border-color:var(--sage-deep);color:#fff;}
-.chip-label{color:var(--muted);font-size:11px;letter-spacing:1px;text-transform:uppercase;}
-.contact-chip:hover .chip-label{color:rgba(255,255,255,.7);}
-
-/* SERVICE PAGES */
-.service-page{max-width:720px;margin:0 auto;padding:70px 28px 80px;}
-.page-eyebrow{display:block;text-align:center;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--sage-deep);margin-bottom:16px;}
-.page-title{font-family:"Cormorant Garamond",serif;font-size:clamp(30px,6vw,48px);font-weight:700;text-align:center;line-height:1.2;color:var(--text);margin-bottom:14px;letter-spacing:-.3px;}
-.page-subtitle{text-align:center;color:var(--muted);font-size:15px;margin-bottom:48px;line-height:1.7;max-width:520px;margin-left:auto;margin-right:auto;}
-.prose-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;margin-bottom:24px;font-size:15px;line-height:1.85;color:var(--muted);}
-.prose-card p+p{margin-top:14px;}
-.req-block{background:var(--sage-dim);border:1px solid var(--sage-light);border-left:4px solid var(--sage-deep);border-radius:var(--radius);padding:28px 32px;margin-bottom:28px;}
-.req-block h4{font-family:"Cormorant Garamond",serif;font-size:17px;font-weight:600;color:var(--sage-deep);margin-bottom:16px;text-align:center;}
+#home{max-width:920px;margin:0 auto;padding:80px 40px;}
+.home-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--lime);font-weight:500;margin-bottom:16px;}
+.home-title{font-family:"Playfair Display",serif;font-size:clamp(44px,7vw,70px);font-weight:400;line-height:1.1;color:var(--stone);margin-bottom:22px;letter-spacing:-.4px;}
+.home-title em{font-style:italic;color:rgba(200,240,96,.7);}
+.home-sub{font-size:16px;line-height:1.85;color:var(--stone3);max-width:600px;margin-bottom:56px;font-weight:300;}
+.home-sub strong{color:var(--lime);font-weight:400;cursor:pointer;}
+.home-sub strong:hover{text-decoration:underline;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.card{background:var(--charcoal2);padding:36px 30px;cursor:pointer;transition:background .2s;position:relative;overflow:hidden;}
+.card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--lime);transform:scaleX(0);transform-origin:left;transition:transform .28s cubic-bezier(.4,0,.2,1);}
+.card:hover{background:var(--charcoal3);}
+.card:hover::after{transform:scaleX(1);}
+.card-icon{width:44px;height:44px;border-radius:9px;background:var(--lime-dim);border:1px solid var(--lime-mid);display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
+.card-icon svg{width:18px;height:18px;stroke:var(--lime);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.card-name{font-family:"Playfair Display",serif;font-size:20px;font-weight:400;margin-bottom:8px;color:var(--stone);}
+.card-desc{font-size:13px;color:var(--stone3);line-height:1.8;margin-bottom:22px;font-weight:300;}
+.card-price{font-family:"Playfair Display",serif;font-size:28px;font-weight:700;color:var(--lime);}
+.card-price span{font-size:13px;font-weight:300;color:var(--stone3);}
+.contact-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:52px;}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:var(--charcoal3);border:1px solid var(--border);border-radius:4px;font-size:13px;font-weight:400;color:var(--stone2);text-decoration:none;transition:background .18s,border-color .18s,color .18s;cursor:pointer;}
+.chip:hover{background:var(--lime);border-color:var(--lime);color:#0c0b09;}
+.service-page{max-width:700px;margin:0 auto;padding:80px 40px;}
+.page-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--lime);font-weight:500;margin-bottom:14px;}
+.page-title{font-family:"Playfair Display",serif;font-size:clamp(34px,5vw,52px);font-weight:400;color:var(--stone);margin-bottom:14px;letter-spacing:-.3px;line-height:1.15;}
+.page-sub{font-size:15px;color:var(--stone3);line-height:1.8;max-width:520px;margin-bottom:48px;font-weight:300;}
+.prose{background:var(--charcoal3);border:1px solid var(--border);border-radius:12px;padding:32px;margin-bottom:24px;font-size:15px;line-height:1.85;color:var(--stone3);font-weight:300;}
+.prose p+p{margin-top:14px;}
+.req{background:var(--lime-dim);border:1px solid var(--lime-mid);border-left:3px solid var(--lime);border-radius:12px;padding:28px;margin-bottom:28px;}
+.req h4{font-family:"Playfair Display",serif;font-size:17px;font-weight:400;color:var(--lime);margin-bottom:16px;}
 .req-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
-.req-list li{font-size:14px;color:var(--text);display:flex;align-items:flex-start;gap:10px;line-height:1.6;}
-.req-list li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--sage-deep);flex-shrink:0;margin-top:7px;}
-.pricing-badge{display:inline-flex;align-items:center;gap:8px;background:var(--cream2);border:1px solid var(--border);border-radius:30px;padding:8px 20px;font-size:15px;font-weight:600;color:var(--bark);margin-bottom:28px;}
-.note-text{text-align:center;font-size:13px;color:var(--muted);margin-bottom:20px;font-style:italic;}
-.proceed-btn{display:block;width:100%;padding:16px;background:var(--sage-deep);color:#fff;border:none;border-radius:var(--radius);font-size:16px;font-weight:600;font-family:"DM Sans",sans-serif;letter-spacing:1px;cursor:pointer;transition:background .2s,transform .15s,box-shadow .2s;text-transform:uppercase;}
-.proceed-btn:hover{background:var(--sage);transform:translateY(-1px);box-shadow:0 6px 24px rgba(78,115,83,.25);}
-.proceed-btn:active{transform:scale(.98);}
-.proceed-btn.warm{background:var(--bark);}
-.proceed-btn.warm:hover{background:#6a4c32;}
-
-.site-footer{border-top:1px solid var(--border);text-align:center;padding:28px 20px;font-size:13px;color:var(--muted);background:var(--cream2);}
-
-@media(max-width:560px){.nav-logo{display:none;}.tab-btn{padding:8px 11px;font-size:13px;}.service-page,#home{padding:40px 18px 60px;}.prose-card,.req-block{padding:22px 18px;}}
+.req-list li{font-size:14px;color:var(--stone2);display:flex;align-items:flex-start;gap:10px;line-height:1.65;font-weight:300;}
+.req-list li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--lime);flex-shrink:0;margin-top:8px;}
+.price-badge{display:inline-flex;align-items:center;gap:8px;background:var(--charcoal4);border:1px solid var(--border);border-radius:4px;padding:8px 18px;font-size:15px;font-weight:500;color:var(--stone2);margin-bottom:28px;}
+.price-badge span{color:var(--lime);}
+.note{font-size:13px;color:var(--stone3);margin-bottom:18px;font-style:italic;font-weight:300;}
+.proceed{display:block;width:100%;padding:15px;background:var(--lime);color:#0c0b09;border:none;border-radius:6px;font-size:14px;font-weight:500;font-family:"DM Sans",sans-serif;letter-spacing:.3px;cursor:pointer;transition:background .2s;}
+.proceed:hover{background:#d6f472;}
+.proceed.warm{background:var(--charcoal4);color:var(--stone);border:1px solid var(--border);}
+.proceed.warm:hover{background:var(--charcoal3);}
+.site-footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.foot-logo{font-family:"Playfair Display",serif;font-size:18px;font-weight:700;color:var(--stone);}
+.foot-logo span{color:var(--lime);}
+.foot-sub{font-size:12px;color:var(--stone3);}
+@media(max-width:560px){#home,.service-page{padding:48px 22px;}.prose,.req{padding:22px 18px;}.site-footer{padding:24px 22px;}}
 </style>
 </head>
 <body>
+<header>
+  <button class="tab active" data-tab="home">Home</button>
+  <button class="tab" data-tab="website">Website</button>
+  <button class="tab" data-tab="flyers">Flyers</button>
+  <button class="tab" data-tab="social">Social Media</button>
+</header>
 
-<nav>
-  <div class="nav-logo">Kojlux <span>Digital</span></div>
-  <button class="tab-btn active" data-tab="home">Home</button>
-  <button class="tab-btn" data-tab="website">Website</button>
-  <button class="tab-btn" data-tab="flyers">Flyers</button>
-  <button class="tab-btn" data-tab="social">Social Media</button>
-</nav>
-
-<!-- HOME -->
 <div id="home" class="section active">
-  <div id="home-inner">
-    <div class="home-hero">
-      <div class="home-eyebrow">Fresno, CA &mdash; Digital Services</div>
-      <h1 class="home-title">We Build Your<br><span>Digital Presence</span></h1>
-      <p class="home-lead">
-        Kojlux Digital is a professional team helping businesses grow digitally and visually. We specialize in
-        <strong onclick="openTab('website')">Website Development</strong>,
-        <strong onclick="openTab('flyers')">Flyer Design</strong>, and
-        <strong onclick="openTab('social')">Social Media Setup</strong> &mdash;
-        each handled by a dedicated specialist with quality, clarity, and the best price possible.
-      </p>
-      <div class="divider"></div>
+  <div class="home-label">Fresno, CA &mdash; Digital Services</div>
+  <h1 class="home-title">We build your<br><em>digital presence.</em></h1>
+  <p class="home-sub">Kojlux Digital helps businesses grow online. We specialize in <strong onclick="openTab('website')">Website Development</strong>, <strong onclick="openTab('flyers')">Flyer Design</strong>, and <strong onclick="openTab('social')">Social Media Setup</strong> &mdash; each handled by a dedicated specialist with total clarity and the best price possible.</p>
+  <div class="cards">
+    <div class="card" onclick="openTab('website')">
+      <div class="card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+      <div class="card-name">Website Development</div>
+      <div class="card-desc">Clean, professional websites that build credibility and represent your brand with confidence.</div>
+      <div class="card-price">$24.99</div>
     </div>
-    <div class="cards-row">
-      <div class="home-card" onclick="openTab('website')">
-        <div class="card-icon-ring"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
-        <h3>Website Development</h3>
-        <p>Clean, structured websites that build credibility and represent your brand with confidence.</p>
-        <div class="card-price">$24.99</div>
-      </div>
-      <div class="home-card" onclick="openTab('flyers')">
-        <div class="card-icon-ring"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
-        <h3>Flyer Design</h3>
-        <p>Eye-catching, polished flyers that communicate your message within seconds.</p>
-        <div class="card-price">$5</div>
-      </div>
-      <div class="home-card" onclick="openTab('social')">
-        <div class="card-icon-ring"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-        <h3>Social Media Setup</h3>
-        <p>Branded, professional social accounts that build your presence from day one.</p>
-        <div class="card-price">$10 / account</div>
-      </div>
+    <div class="card" onclick="openTab('flyers')">
+      <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <div class="card-name">Flyer Design</div>
+      <div class="card-desc">Eye-catching, polished designs that communicate your message before the viewer reads a word.</div>
+      <div class="card-price">$5</div>
     </div>
-    <div class="contact-strip">
-      <a class="contact-chip" href="https://www.instagram.com/main.launchpoint?igsh=MzRIODBiNWFIZA%3D%3D" target="_blank" rel="noopener">
-        <span class="chip-label">Instagram</span> Kojlux Digital
-      </a>
+    <div class="card" onclick="openTab('social')">
+      <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+      <div class="card-name">Social Media Setup</div>
+      <div class="card-desc">Branded, professional accounts that establish your presence from the very first day.</div>
+      <div class="card-price">$10 <span>/ account</span></div>
     </div>
   </div>
-  <footer class="site-footer">Kojlux Digital &mdash; Fresno, CA &nbsp;&middot;&nbsp; &copy; 2026</footer>
+  <div class="contact-row">
+    <a class="chip" href="https://www.instagram.com/main.launchpoint" target="_blank" rel="noopener">Instagram &middot; Kojlux Digital</a>
+  </div>
+  <footer class="site-footer"><div class="foot-logo">Koj<span>lux</span> Digital</div><div class="foot-sub">Fresno, CA &middot; &copy; 2026</div></footer>
 </div>
 
-<!-- WEBSITE -->
 <div id="website" class="section">
   <div class="service-page">
-    <span class="page-eyebrow">Our Services</span>
+    <div class="page-label">Service</div>
     <h2 class="page-title">Website Development</h2>
-    <p class="page-subtitle">Your digital foundation &mdash; built clean, fast, and with confidence.</p>
-    <div class="prose-card">
-      <p>A website is the digital foundation of any modern business. It builds credibility, strengthens trust, and allows customers to learn about your services at any time. In today's world, most people search online before making decisions, and a professional website immediately positions your brand as serious and established.</p>
-      <p>At Kojlux Digital, we design clean, structured, and professional websites that clearly communicate your message and represent your brand with confidence. Our focus is simplicity, clarity, and effectiveness &mdash; ensuring your website is visually appealing, easy to navigate, and aligned with your goals.</p>
-      <p>Delivery is completed within 2 to 4 days. Timeline updates are provided through direct messaging, and minor revisions are included before final delivery to ensure your satisfaction.</p>
+    <p class="page-sub">Your digital foundation &mdash; built clean, fast, and with confidence.</p>
+    <div class="prose">
+      <p>A website is the foundation of any modern business. It builds credibility, establishes trust, and ensures customers can learn about your services at any hour. In today&rsquo;s landscape, most people search before they commit &mdash; a professional website positions you as serious before the first conversation happens.</p>
+      <p>At Kojlux Digital, we design clean, structured websites that communicate your message clearly and represent your brand with confidence. Delivery within 2 to 4 days, with progress updates through direct messaging. Minor revisions are included before final delivery.</p>
     </div>
-    <div style="text-align:center;margin-bottom:28px;"><div class="pricing-badge">One-time payment &mdash; $24.99</div></div>
-    <div class="req-block">
-      <h4>What to Have Ready</h4>
+    <div style="margin-bottom:28px;"><div class="price-badge">One-time payment &mdash; <span>$24.99</span></div></div>
+    <div class="req">
+      <h4>What to have ready</h4>
       <ul class="req-list">
-        <li>Business name</li>
-        <li>Logo (if available)</li>
-        <li>Description of your offerings</li>
-        <li>Preferred colors for the website</li>
-        <li>Any specific structure or layout requirements</li>
+        <li>Business name</li><li>Logo, if available</li><li>Description of your offerings</li>
+        <li>Preferred color direction</li><li>Any specific structure or layout requirements</li>
       </ul>
     </div>
-    <p class="note-text">Clicking Proceed will open SMS messaging for direct discussion.</p>
-    <button class="proceed-btn" onclick="window.location.href='sms:5593168075?body=Hey Kojlux Digital, Can I get a website with... (describe how you want it)'">
-      Proceed &mdash; Get a Website
-    </button>
+    <p class="note">Proceeding will open SMS for a direct conversation.</p>
+    <button class="proceed" onclick="window.location.href='sms:5593168075?body=Hey Kojlux Digital, I%27d like a website — here%27s what I%27m thinking:'">Proceed &mdash; Get a Website</button>
   </div>
-  <footer class="site-footer">Kojlux Digital &mdash; Fresno, CA &nbsp;&middot;&nbsp; &copy; 2026</footer>
+  <footer class="site-footer"><div class="foot-logo">Koj<span>lux</span> Digital</div><div class="foot-sub">Fresno, CA &middot; &copy; 2026</div></footer>
 </div>
 
-<!-- FLYERS -->
 <div id="flyers" class="section">
   <div class="service-page">
-    <span class="page-eyebrow">Our Services</span>
+    <div class="page-label">Service</div>
     <h2 class="page-title">Flyer Design</h2>
-    <p class="page-subtitle">Visuals that stop people in their tracks and communicate your message in seconds.</p>
-    <div class="prose-card">
-      <p>Flyers remain one of the most effective and affordable marketing tools available. A strong flyer captures attention instantly and communicates your message within seconds. Whether you are promoting a sale, launching a new service, advertising an event, or spreading awareness, professional design makes your idea visible and memorable.</p>
-      <p>At Kojlux Digital, we create visually clean and impactful flyer designs that combine clarity with strong presentation. Each flyer is structured to stand out while maintaining a professional and polished appearance. Minor revisions are included before final approval to ensure the final product reflects your vision accurately.</p>
-      <p>Delivery is completed within 1 to 3 days, with timeline updates provided through direct messaging.</p>
+    <p class="page-sub">Visuals that communicate your message in seconds.</p>
+    <div class="prose">
+      <p>A well-designed flyer captures attention before the reader has decided to engage. It communicates your message quickly, clearly, and memorably &mdash; whether promoting a service, an event, or a launch.</p>
+      <p>We design flyers that are visually clean and impactful, structured to stand out while remaining polished and professional. Minor revisions are included. Delivery within 1 to 3 days.</p>
     </div>
-    <div style="text-align:center;margin-bottom:28px;"><div class="pricing-badge">Design &mdash; $5 &nbsp;&middot;&nbsp; Printed copies &mdash; $3 per 10</div></div>
-    <div class="req-block">
-      <h4>What to Have Ready</h4>
+    <div style="margin-bottom:28px;"><div class="price-badge">Design &mdash; <span>$5</span> &nbsp;&middot;&nbsp; Printed copies &mdash; <span>$3 per 10</span></div></div>
+    <div class="req">
+      <h4>What to have ready</h4>
       <ul class="req-list">
-        <li>What is the flyer about?</li>
-        <li>What elements should be included? (QR code, logo, etc.)</li>
-        <li>Preferred colors and style</li>
-        <li>Any additional details or copy for the flyer</li>
+        <li>What is the flyer promoting?</li><li>Elements to include &mdash; QR code, logo, imagery direction</li>
+        <li>Preferred colors and overall style</li><li>Any text or copy to feature</li>
       </ul>
     </div>
-    <p class="note-text">Clicking Proceed will open our Instagram &mdash; please send a message to begin.</p>
-    <button class="proceed-btn warm" onclick="window.location.href='https://www.instagram.com/__ramosiir/'">
-      Proceed &mdash; Get a Flyer
-    </button>
+    <p class="note">Proceeding will open our Instagram &mdash; send a message to begin.</p>
+    <button class="proceed warm" onclick="window.location.href='https://www.instagram.com/__ramosiir/'">Proceed &mdash; Get a Flyer</button>
   </div>
-  <footer class="site-footer">Kojlux Digital &mdash; Fresno, CA &nbsp;&middot;&nbsp; &copy; 2026</footer>
+  <footer class="site-footer"><div class="foot-logo">Koj<span>lux</span> Digital</div><div class="foot-sub">Fresno, CA &middot; &copy; 2026</div></footer>
 </div>
 
-<!-- SOCIAL -->
 <div id="social" class="section">
   <div class="service-page">
-    <span class="page-eyebrow">Our Services</span>
+    <div class="page-label">Service</div>
     <h2 class="page-title">Social Media Setup</h2>
-    <p class="page-subtitle">A professional first impression starts with a properly structured account.</p>
-    <div class="prose-card">
-      <p>Social media platforms are essential tools for building visibility, credibility, and engagement in today's digital environment. A properly structured social media account creates a professional first impression and helps establish your brand presence from the very beginning.</p>
-      <p>At Kojlux Digital, we assist in setting up organized and branded social media accounts tailored to your needs. Clients may choose to register using either a phone number or an email address, depending on their preference. All account details are securely delivered upon completion to ensure a smooth and professional experience.</p>
-      <p>Delivery is completed within 1 to 3 days, with timeline updates provided throughout the process.</p>
+    <p class="page-sub">A professional first impression begins with a properly built account.</p>
+    <div class="prose">
+      <p>Social platforms are where your audience forms their first impression. A properly structured account communicates professionalism and intent before you have said a word. The setup matters more than most people realize.</p>
+      <p>We set up organized, branded accounts tailored to your specific needs. You choose whether to register via phone or email. All credentials are delivered securely upon completion. Delivery within 1 to 3 days.</p>
     </div>
-    <div style="text-align:center;margin-bottom:28px;"><div class="pricing-badge">$10 per account</div></div>
-    <div class="req-block">
-      <h4>What to Have Ready</h4>
+    <div style="margin-bottom:28px;"><div class="price-badge"><span>$10</span> per account</div></div>
+    <div class="req">
+      <h4>What to have ready</h4>
       <ul class="req-list">
-        <li>Platform or platforms required</li>
-        <li>Business name and handle preferences</li>
-        <li>Logo or branding materials</li>
-        <li>Content focus and account theme</li>
-        <li>Registration preference &mdash; email or phone number</li>
-        <li>Any special instructions or style preferences</li>
+        <li>Platform or platforms needed</li><li>Preferred handle and business name</li>
+        <li>Logo or branding materials</li><li>Content focus and account theme</li>
+        <li>Registration preference &mdash; email or phone</li><li>Any style or tone preferences</li>
       </ul>
     </div>
-    <p class="note-text">Clicking Proceed will open SMS messaging for direct discussion.</p>
-    <button class="proceed-btn" onclick="window.location.href='sms:5592463134?body=Hey Kojlux Digital, I\\'d like to set up social media accounts for... (platforms / details)'">
-      Proceed &mdash; Set Up Social Media
-    </button>
+    <p class="note">Proceeding will open SMS for a direct conversation.</p>
+    <button class="proceed" onclick="window.location.href='sms:5592463134?body=Hey Kojlux Digital, I%27d like social media accounts set up for:'">Proceed &mdash; Set Up Social Media</button>
   </div>
-  <footer class="site-footer">Kojlux Digital &mdash; Fresno, CA &nbsp;&middot;&nbsp; &copy; 2026</footer>
+  <footer class="site-footer"><div class="foot-logo">Koj<span>lux</span> Digital</div><div class="foot-sub">Fresno, CA &middot; &copy; 2026</div></footer>
 </div>
 
 <script>
-const tabs=document.querySelectorAll('.tab-btn');
+const tabs=document.querySelectorAll('.tab');
 const sections=document.querySelectorAll('.section');
-tabs.forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    tabs.forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    const target=tab.getAttribute('data-tab');
+tabs.forEach(t=>{
+  t.addEventListener('click',()=>{
+    tabs.forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    const id=t.getAttribute('data-tab');
     sections.forEach(s=>s.classList.remove('active'));
-    document.getElementById(target).classList.add('active');
+    document.getElementById(id).classList.add('active');
     window.scrollTo({top:0,behavior:'smooth'});
   });
 });
-function openTab(id){document.querySelector('.tab-btn[data-tab="'+id+'"]').click();}
+function openTab(id){document.querySelector('.tab[data-tab="'+id+'"]').click();}
 <\/script>
 </body>
 </html>`;
 
-function openCompany(which) {
-  var overlay  = document.getElementById("company-overlay");
-  var iframe   = document.getElementById("company-iframe");
-  var siteName = document.getElementById("overlay-site-name");
-
-  if (which === "mobile") {
-    siteName.textContent = "Kojlux Mobile Car Detailing";
-    iframe.srcdoc = MOBILE_HTML;
-  } else {
-    siteName.textContent = "Kojlux Digital";
-    iframe.srcdoc = DIGITAL_HTML;
-  }
-
-  overlay.style.display = "flex";
-  document.body.style.overflow = "hidden";
-  // trigger fade in on next frame
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() {
-      overlay.classList.add("open", "visible");
-    });
-  });
+/* ── OVERLAY ── */
+function openOverlay(which) {
+  const ov    = document.getElementById('overlay');
+  const iframe = document.getElementById('ov-iframe');
+  const name   = document.getElementById('ov-site-name');
+  iframe.srcdoc = which === 'mobile' ? MOBILE_HTML : DIGITAL_HTML;
+  name.textContent = which === 'mobile' ? 'Kojlux Mobile Car Detailing' : 'Kojlux Digital';
+  ov.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(() => requestAnimationFrame(() => ov.classList.add('visible')));
 }
-
-function closeBrowser() {
-  var overlay = document.getElementById("company-overlay");
-  var iframe  = document.getElementById("company-iframe");
-  overlay.classList.remove("visible");
-  document.body.style.overflow = "";
-  setTimeout(function() {
-    overlay.classList.remove("open");
-    overlay.style.display = "none";
-    iframe.srcdoc = "";
-    iframe.src = "about:blank";
-  }, 260);
+function closeOverlay() {
+  const ov    = document.getElementById('overlay');
+  const iframe = document.getElementById('ov-iframe');
+  ov.classList.remove('visible');
+  document.body.style.overflow = '';
+  setTimeout(() => {
+    ov.style.display = 'none';
+    iframe.srcdoc = '';
+    iframe.src = 'about:blank';
+  }, 300);
 }
-
-var observer = new IntersectionObserver(function(entries) {
-  entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add("visible"); });
-}, { threshold: 0.1 });
-document.querySelectorAll(".fade-up").forEach(function(el) { observer.observe(el); });
 </script>
 </body>
 </html>
